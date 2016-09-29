@@ -186,7 +186,7 @@ $(function () {
         light = new THREE.PointLight(0xffffff,0.5,100);
         light.position.set(0,10,-5);
         light.castShadow = true;
-        scene.add(light);
+        //scene.add(light);
 
         var color = "0x"+randColor();
 
@@ -268,13 +268,14 @@ $(function () {
 
         randiiiC = '0x'+randiiiC;
 
-        if(!last || now - last >= 560.74){
+        if(!last || now - last >= 2*1000){
             last = now;
-            $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 100);
+            $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50);
             //light2.color.setHex( Number(randiiiC) );
         }
-
-        light2.intensity = analyzer1.getAverageFrequency() / 100;
+        $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
+        light2.intensity = analyzer1.getAverageFrequency() / 50;
+        light2.distance = analyzer1.getAverageFrequency();
 
         //
 
