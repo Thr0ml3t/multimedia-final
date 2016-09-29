@@ -21,6 +21,10 @@ $(function () {
 
     var timer01;
 
+    var listener;
+
+    var analyzer1;
+
     init();
 
     $(window).on("resize", function () {
@@ -47,7 +51,12 @@ $(function () {
 
         camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 1000);
 
+        listener = new THREE.AudioListener();
+        camera.add(listener);
+
         var loader = new THREE.JSONLoader();
+
+        var soundLoader = new THREE.AudioLoader();
 
         mapGroup = new THREE.Object3D();
         mapGroup2 = new THREE.Object3D();
@@ -143,6 +152,17 @@ $(function () {
         test.name = "Holi";
 
         scene.add(test);
+
+
+        var bgmusic = new THREE.Audio(listener);
+        soundLoader.load('music/music.ogg',function (buffer) {
+            bgmusic.setBuffer(buffer);
+            bgmusic.setVolume(0.5);
+            bgmusic.setLoop(true);
+            bgmusic.play();
+        });
+
+        analyzer1 = new THREE.AudioAnalyser(bgmusic,32);
 
         //console.log(pasillos);
 
@@ -248,11 +268,13 @@ $(function () {
 
         randiiiC = '0x'+randiiiC;
 
-        if(!last || now - last >= 428.57){
+        if(!last || now - last >= 560.74){
             last = now;
-            $("#score").text(delta);
-            light2.color.setHex( Number(randiiiC) );
+            $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 100);
+            //light2.color.setHex( Number(randiiiC) );
         }
+
+        light2.intensity = analyzer1.getAverageFrequency() / 100;
 
         //
 

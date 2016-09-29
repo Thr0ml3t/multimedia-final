@@ -17,36 +17,6 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
-              <entry file="file://$USER_HOME$/Documents/MI - Proyecto/juego/js/src/game.js">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-2261">
-                    <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="36" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-              <entry file="file://$USER_HOME$/Documents/MI - Proyecto/juego/js/src/main.js">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-51">
-                    <caret line="12" column="17" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="17" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="ProyFinak" />
@@ -67,7 +37,7 @@
         <entry file="file://$PROJECT_DIR$/js/app.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="334">
-              <caret line="253" column="48" selection-start-line="253" selection-start-column="48" selection-end-line="253" selection-end-column="48" />
+              <caret line="276" column="65" selection-start-line="276" selection-start-column="65" selection-end-line="276" selection-end-column="65" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
               </folding>
@@ -112,7 +82,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
+    <option name="x" value="-1928" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
@@ -360,15 +330,15 @@
       <workItem from="1475117248159" duration="2509000" />
       <workItem from="1475119808963" duration="182000" />
       <workItem from="1475120021711" duration="4405000" />
-      <workItem from="1475157231212" duration="15647000" />
+      <workItem from="1475157231212" duration="17742000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32411000" />
+    <option name="totallyTimeSpent" value="34506000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-1928" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973656" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -585,7 +555,7 @@
     <entry file="file://$PROJECT_DIR$/js/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="334">
-          <caret line="253" column="48" selection-start-line="253" selection-start-column="48" selection-end-line="253" selection-end-column="48" />
+          <caret line="276" column="65" selection-start-line="276" selection-start-column="65" selection-end-line="276" selection-end-column="65" />
           <folding>
             <element signature="e#0#42#0" expanded="false" />
           </folding>
