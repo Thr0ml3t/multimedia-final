@@ -7,13 +7,9 @@ $(function () {
 
     var pasillos = new THREE.Group();
 
-    var groups = [];
-
     var keyboard = {};
 
     var player = { height: 5.0, speed: 0.5 };
-
-    var cont = $("#game");
 
     var mapGroup,mapGroup2;
 
@@ -24,15 +20,22 @@ $(function () {
     var listener;
 
     var analyzer1;
+    var coso;
+
+    var taskF = false;
 
     init();
 
     $(window).on("resize", function () {
-        aspect = cont.innerWidth() / cont.innerHeight();
+        var game = $("#game");
+        var w = game.innerWidth();
+        var h = game.innerHeight();
+
+        aspect = w / h;
         camera.aspect = aspect;
         camera.updateProjectionMatrix();
 
-        render3D.setSize(cont.innerWidth(), cont.innerHeight());
+        render3D.setSize(game.innerWidth(), game.innerHeight());
     });
 
     $(window).on("keydown", function (e) {
@@ -47,7 +50,9 @@ $(function () {
 
         timer01 = new THREE.Clock();
         scene = new THREE.Scene();
-        aspect = cont.innerWidth() / cont.innerHeight();
+
+        var game = $("#game");
+        aspect = game.innerWidth() / game.innerHeight();
 
         camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 1000);
 
@@ -64,33 +69,50 @@ $(function () {
         pasillos.name = "PAS";
 
 
-        loader.load(
-            "js/modelos/pasillos/p1.js",
-            function (geometry, materials) {
-                var material = new THREE.MeshFaceMaterial(materials);
-                var mesh = new THREE.Mesh(geometry,material);
+        var promiss = new Promise(function (resolve, reject) {
+            loader.load(
+                "js/modelos/pasillos/p11.js",
+                function (geometry, materials) {
+                    var material = new THREE.MeshFaceMaterial(materials);
+                    var mesh = new THREE.Mesh(geometry,material);
 
-                mesh.name = "Px1";
-                mesh.receiveShadow = true;
-                mesh.receiveShadow = true;
-                mesh.scale.set(5,5,5);
-                var copy;
-                for(var i = 0;i < 15; i++){
-                    copy = mesh.clone();
+                    mesh.name = "Px1";
+                    mesh.receiveShadow = true;
+                    mesh.receiveShadow = true;
+                    mesh.scale.set(5,5,5);
+                    var copy;
+                    for(var i = 0;i < 15; i++){
+                        copy = mesh.clone();
 
-                    copy.name = "Pasillo - " + i;
+                        copy.name = "P"+i;
 
-                    copy.scale.set(5,5,5);
-                    copy.rotation.set(0,Math.PI/2,0);
-                    copy.position.z = (40 * i);
+                        copy.scale.set(5,5,5);
+                        copy.rotation.set(0,Math.PI/2,0);
+                        copy.position.z = (40 * i);
 
-                    mapGroup.add(copy);
+                        mapGroup.add(copy);
+                    }
+
+                    scene.add(mapGroup);
+
+                    var mat = mesh.material.materials[3];
+
+                    resolve(mat);
+
+                    //coso = mapGroup.getObjectByName("P1",true);
+
+                    //pasilloGroup.name("Pasillos");
+                    //scene.add(pasilloGroup);
                 }
+            );
+        });
 
-                //pasilloGroup.name("Pasillos");
-                //scene.add(pasilloGroup);
-            }
-        );
+        promiss.then(function (material) {
+
+            coso = material;
+
+            taskF = true;
+        });
 
         loader.load(
             "js/modelos/pasillos/p2.js",
@@ -109,15 +131,18 @@ $(function () {
 
                     copy = mesh.clone();
 
-                    copy.name = "Pasillo 2 - " + i;
+                    copy.name = i;
 
                     copy.scale.set(5,5,5);
                     copy.rotation.set(0,Math.PI/2,0);
                     copy.position.z = (40 * i) + 20;
 
+
                     mapGroup2.add(copy);
                 }
 
+                mapGroup2.name = "ps2";
+                scene.add(mapGroup2);
 
                 /*mesh.position.x = 44.45;
                 mesh.position.z = -0.5;
@@ -141,17 +166,11 @@ $(function () {
             }
         );
 
-        groups.push(mapGroup);
-        groups.push(mapGroup2);
+        mapGroup.castShadow = true
 
-        scene.add(groups[0]);
-        scene.add(groups[1]);
 
-        var test = groups[0];
 
-        test.name = "Holi";
 
-        scene.add(test);
 
 
         var bgmusic = new THREE.Audio(listener);
@@ -215,7 +234,7 @@ $(function () {
 
         render3D = new THREE.WebGLRenderer();
 
-        render3D.setSize(cont.innerWidth(), cont.innerHeight());
+        render3D.setSize(game.innerWidth(), game.innerHeight());
 
         render3D.shadowMap.enabled = true;
         render3D.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -278,9 +297,9 @@ $(function () {
             light3.color.b = Math.random();*/
 
         }
-        light2.color.r = (Math.sin(0.01*cont + 0) * 127 + 128)/255;
-        light2.color.g = (Math.sin(0.01*cont + 2) * 127 + 128)/255;
-        light2.color.b = (Math.sin(0.01*cont + 4) * 127 + 128)/255;
+        //light2.color.r = (Math.sin(0.0353*cont + 0) * 127 + 128)/255;
+        //light2.color.g = (Math.sin(0.0353*cont + 2) * 127 + 128)/255;
+        //light2.color.b = (Math.sin(0.0353*cont + 4) * 127 + 128)/255;
 
         cont++;
         //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
@@ -289,6 +308,16 @@ $(function () {
         $("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
         light2.intensity = analyzer1.getAverageFrequency() / 100;
         light2.distance = analyzer1.getAverageFrequency();
+
+        if(taskF){
+            coso.emissive.r = (Math.sin(0.0353*cont + 0) * 127 + 128)/255;
+            coso.emissive.g = (Math.sin(0.0353*cont + 2) * 127 + 128)/255;
+            coso.emissive.b = (Math.sin(0.0353*cont + 4) * 127 + 128)/255;
+
+            coso.emissiveIntensity = analyzer1.getAverageFrequency() / 255;
+        }
+
+        ///phong1SG
 
 
         /*mapGroup.position.z -= delta * 50;
