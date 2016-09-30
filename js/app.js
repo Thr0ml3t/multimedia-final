@@ -190,7 +190,7 @@ $(function () {
 
         var color = "0x"+randColor();
 
-        light2 = new THREE.PointLight(Number(color),1,30);
+        light2 = new THREE.PointLight(0xffffff,1,30);
         light2.position.set(0,10,-5);
         light2.castShadow = true;
         scene.add(light2);
@@ -259,6 +259,7 @@ $(function () {
     }, 200);*/
 
     var last = 0;
+    var cont = 0;
     function animate(now) {
         requestAnimationFrame(animate);
 
@@ -268,16 +269,26 @@ $(function () {
 
         randiiiC = '0x'+randiiiC;
 
-        if(!last || now - last >= 2*1000){
+        if(!last || now - last >= 352){
             last = now;
-            $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50);
+            //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50);
             //light2.color.setHex( Number(randiiiC) );
-        }
-        $("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
-        light2.intensity = analyzer1.getAverageFrequency() / 50;
-        light2.distance = analyzer1.getAverageFrequency();
+            /*light2.color.r = Math.random();
+            light2.color.g = Math.random();
+            light3.color.b = Math.random();*/
 
-        //
+        }
+        light2.color.r = (Math.sin(0.01*cont + 0) * 127 + 128)/255;
+        light2.color.g = (Math.sin(0.01*cont + 2) * 127 + 128)/255;
+        light2.color.b = (Math.sin(0.01*cont + 4) * 127 + 128)/255;
+
+        cont++;
+        //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
+        $("#inte").text("Intensidad: " + analyzer1.getAverageFrequency()/100);
+        $("#dist").text("Distancia: " + analyzer1.getAverageFrequency());
+        $("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
+        light2.intensity = analyzer1.getAverageFrequency() / 100;
+        light2.distance = analyzer1.getAverageFrequency();
 
 
         /*mapGroup.position.z -= delta * 50;
