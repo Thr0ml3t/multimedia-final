@@ -314,6 +314,10 @@ $(function () {
             coso.emissive.g = (Math.sin(0.0353*cont + 2) * 127 + 128)/255;
             coso.emissive.b = (Math.sin(0.0353*cont + 4) * 127 + 128)/255;
 
+            coso.color.r = analyzer1.getAverageFrequency() / 255;
+            coso.color.g = analyzer1.getAverageFrequency() / 255;
+            coso.color.b = analyzer1.getAverageFrequency() / 255;
+
             coso.emissiveIntensity = analyzer1.getAverageFrequency() / 255;
         }
 
