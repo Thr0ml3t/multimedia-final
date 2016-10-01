@@ -3,13 +3,14 @@
  */
 $(function () {
     var scene, camera, render3D, aspect;
+
     var controls;
 
     var pasillos = new THREE.Group();
 
     var keyboard = {};
 
-    var player = {height: 5.0, speed: 0.5};
+    var player = {height: 5.0, speed: 5.0, maxSpeed: 40, acceleration: 0.1};
 
     var mapGroup, mapGroup2, neonLights;
 
@@ -26,6 +27,8 @@ $(function () {
 
 
     var neonMaterial;
+
+
 
     init();
     animate();
@@ -54,6 +57,7 @@ $(function () {
 
         timer01 = new THREE.Clock();
         scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000,0.01);
 
         var game = $("#game");
         aspect = game.innerWidth() / game.innerHeight();
@@ -61,6 +65,7 @@ $(function () {
         camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 1000);
 
         listener = new THREE.AudioListener();
+
         camera.add(listener);
 
         var loader = new THREE.JSONLoader();
@@ -69,6 +74,7 @@ $(function () {
 
         var soundLoader = new THREE.AudioLoader();
 
+
         mapGroup = new THREE.Object3D();
         mapGroup2 = new THREE.Object3D();
         neonLights = new THREE.Object3D();
@@ -76,7 +82,10 @@ $(function () {
         pasillos.name = "PAS";
 
 
-        neonMaterial = new THREE.MeshPhongMaterial({color:0xffffff});
+        neonMaterial = new THREE.MeshPhongMaterial({
+            color:0xffffff,
+            emissive: 0xffffff
+        });
         neonMaterial.name = "NeonMat";
 
 
@@ -190,6 +199,8 @@ $(function () {
 
                     copy.scale.set(5, 5, 5);
                     copy.rotation.set(0, Math.PI / 2, 0);
+                    copy.position.y = 0.14;
+                    copy.position.x = 0.16;
                     copy.position.z = (40 * i) + 20;
 
 
@@ -227,7 +238,7 @@ $(function () {
         var bgmusic = new THREE.Audio(listener);
         soundLoader.load('music/music.ogg', function (buffer) {
             bgmusic.setBuffer(buffer);
-            bgmusic.setVolume(0.5);
+            bgmusic.setVolume(0.3);
             bgmusic.setLoop(true);
             bgmusic.play();
         });
@@ -264,6 +275,8 @@ $(function () {
         light2.position.set(0, 10, -5);
         light2.castShadow = true;
         light2.intensity = 0;
+
+
         scene.add(light2);
 
         var sphereSize = 2;
@@ -286,9 +299,13 @@ $(function () {
 
         render3D = new THREE.WebGLRenderer();
 
+        //render3D.autoClear = false;
+
         render3D.setPixelRatio(window.devicePixelRatio);
 
         render3D.setSize(game.innerWidth(), game.innerHeight());
+
+        render3D.gammaInput = true;
 
         render3D.shadowMap.enabled = true;
         render3D.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -304,6 +321,7 @@ $(function () {
 
 
         document.getElementById("game").appendChild(render3D.domElement);
+
 
         window.scene = scene;
 
@@ -338,6 +356,10 @@ $(function () {
 
         var delta = timer01.getDelta();
 
+        //player.speed += delta * analyzer1.getAverageFrequency()/40;
+        player.speed = analyzer1.getAverageFrequency()/2;//Math.min(player.speed,player.maxSpeed);
+
+
         var elapsed = timer01.getElapsedTime();
 
         var randiiiC = "000000".replace(/0/g, function () {
@@ -362,7 +384,7 @@ $(function () {
         cont++;
         //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
         $("#inte").text("Tiempo: " + timer01.getElapsedTime());
-        $("#dist").text("MapGroup Z: " + mapGroup.position.z);
+        $("#dist").text("Velocidad: " + player.speed);
         //$("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
 
 
@@ -390,40 +412,40 @@ $(function () {
         ///phong1SG
 
         if (elapsed >= "10") {
-            mapGroup.position.z -= delta * 20;
-            mapGroup2.position.z -= delta * 20;
-            neonLights.position.z -= delta * 20;
+            mapGroup.position.z -= delta * player.speed;
+             mapGroup2.position.z -= delta * player.speed;
+             neonLights.position.z -= delta * player.speed;
         }
 
-        if (mapGroup.position.z <= -280) {
+        if (mapGroup.position.z <= -480) {
             mapGroup.position.z = 0;
             mapGroup2.position.z = 0;
             neonLights.position.z = 0;
         }
 
         //controls.update();
-        if (keyboard[87]) {
-            camera.position.x -= Math.sin(camera.rotation.y) * player.speed;
-            camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+        /*if (keyboard[87]) {
+            camera.position.x -= Math.sin(camera.rotation.y) * 0.5;
+            camera.position.z -= -Math.cos(camera.rotation.y) * 0.5;
 
-            light.position.x -= Math.sin(camera.rotation.y) * player.speed;
-            light.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+            light.position.x -= Math.sin(camera.rotation.y) * 0.5;
+            light.position.z -= -Math.cos(camera.rotation.y) * 0.5;
 
-            light2.position.x -= Math.sin(camera.rotation.y) * player.speed;
-            light2.position.z -= -Math.cos(camera.rotation.y) * player.speed;
+            light2.position.x -= Math.sin(camera.rotation.y) * 0.5;
+            light2.position.z -= -Math.cos(camera.rotation.y) * 0.5;
 
             camera.updateProjectionMatrix();
         }
 
         if (keyboard[83]) {
-            camera.position.x += Math.sin(camera.rotation.y) * player.speed;
-            camera.position.z += -Math.cos(camera.rotation.y) * player.speed;
+            camera.position.x += Math.sin(camera.rotation.y) * 0.5;
+            camera.position.z += -Math.cos(camera.rotation.y) * 0.5;
 
-            light.position.x += Math.sin(camera.rotation.y) * player.speed;
-            light.position.z += -Math.cos(camera.rotation.y) * player.speed;
+            light.position.x += Math.sin(camera.rotation.y) * 0.5;
+            light.position.z += -Math.cos(camera.rotation.y) * 0.5;
 
-            light2.position.x += Math.sin(camera.rotation.y) * player.speed;
-            light2.position.z += -Math.cos(camera.rotation.y) * player.speed;
+            light2.position.x += Math.sin(camera.rotation.y) * 0.5;
+            light2.position.z += -Math.cos(camera.rotation.y) * 0.5;
 
             camera.updateProjectionMatrix();
         }
@@ -436,9 +458,10 @@ $(function () {
         if (keyboard[39]) {
             camera.rotation.y += Math.PI * 0.02;
             camera.updateProjectionMatrix();
-        }
+        }*/
 
         //render3D.clearDepth();
         render3D.render(scene, camera);
+
     }
 });
