@@ -357,7 +357,7 @@ $(function () {
         var delta = timer01.getDelta();
 
         //player.speed += delta * analyzer1.getAverageFrequency()/40;
-        player.speed = analyzer1.getAverageFrequency()/2;//Math.min(player.speed,player.maxSpeed);
+        player.speed = analyzer1.getAverageFrequency()/4;//Math.min(player.speed,player.maxSpeed);
 
 
         var elapsed = timer01.getElapsedTime();
