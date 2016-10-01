@@ -25,9 +25,12 @@ $(function () {
 
     var taskF = false;
 
+    var task2 = false;
+
+    var obsIzq, matObstaculo, obstGroup;
+
 
     var neonMaterial;
-
 
 
     init();
@@ -57,12 +60,12 @@ $(function () {
 
         timer01 = new THREE.Clock();
         scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000,0.01);
+        scene.fog = new THREE.FogExp2(0x000000, 0.01);
 
         var game = $("#game");
         aspect = game.innerWidth() / game.innerHeight();
 
-        camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera(103, aspect, 0.1, 1000);
 
         listener = new THREE.AudioListener();
 
@@ -78,12 +81,13 @@ $(function () {
         mapGroup = new THREE.Object3D();
         mapGroup2 = new THREE.Object3D();
         neonLights = new THREE.Object3D();
+        obstGroup = new THREE.Object3D();
 
         pasillos.name = "PAS";
 
 
         neonMaterial = new THREE.MeshPhongMaterial({
-            color:0xffffff,
+            color: 0xffffff,
             emissive: 0xffffff
         });
         neonMaterial.name = "NeonMat";
@@ -232,6 +236,35 @@ $(function () {
             }
         );
 
+
+        var ObstaclePromise = new Promise(function (resolve, reject) {
+            loader.load(
+                "js/modelos/pasillos/obizq.js",
+                function (geometry, materials) {
+                    //var material = new THREE.MeshFaceMaterial(materials);
+
+                    resolve(geometry);
+                }
+            );
+        });
+
+        ObstaclePromise.then(function (mesh) {
+
+            matObstaculo = new THREE.MeshLambertMaterial({
+                color: 0x00ff00
+            });
+
+            var geom = mesh;
+
+            obsIzq = new THREE.Mesh(geom, matObstaculo);
+
+            obsIzq.scale.set(5, 5, 5);
+            obsIzq.rotation.set(0, Math.PI / 2, 0);
+
+            task2 = true;
+
+        });
+
         mapGroup.castShadow = true;
 
 
@@ -354,10 +387,22 @@ $(function () {
     function animate(now) {
         requestAnimationFrame(animate);
 
+
+        if (task2) {
+            var temp;
+            for (var i = 0; i < 13; i++) {
+                temp = obsIzq.clone();
+                temp.position.z = (40 * i) + 20;
+                obstGroup.add(temp);
+            }
+            scene.add(obstGroup);
+            task2 = false;
+        }
+
         var delta = timer01.getDelta();
 
         //player.speed += delta * analyzer1.getAverageFrequency()/40;
-        player.speed = analyzer1.getAverageFrequency()/4;//Math.min(player.speed,player.maxSpeed);
+        player.speed = analyzer1.getAverageFrequency() / 4;//Math.min(player.speed,player.maxSpeed);
 
 
         var elapsed = timer01.getElapsedTime();
@@ -385,6 +430,7 @@ $(function () {
         //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
         $("#inte").text("Tiempo: " + timer01.getElapsedTime());
         $("#dist").text("Velocidad: " + player.speed);
+        $("#dist").text("Distancia: " + mapGroup.position.z);
         //$("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
 
 
@@ -395,12 +441,12 @@ $(function () {
 
         if (taskF) {
             coso.emissive.r = (Math.sin(0.00353 * cont) * 127 + 128) / 255;
-            coso.emissive.g = (Math.sin(0.00353 * cont + 2) * 127 + 128) / 255;
-            coso.emissive.b = (Math.sin(0.00353 * cont + 4) * 127 + 128) / 255 * 0.
+            coso.emissive.g = (Math.cos(0.00353 * cont + 2) * 127 + 128) / 255;
+            coso.emissive.b = -(Math.sin(0.00353 * cont + 4) * 127 + 128) / 255 * 0.
 
             coso.color.g = (Math.sin(0.00353 * cont) * 127 + 128) / 255;
-            coso.color.b = (Math.sin(0.00353 * cont + 2) * 127 + 128) / 255;
-            coso.color.r = (Math.sin(0.00353 * cont + 4) * 127 + 128) / 255;
+            coso.color.b = (Math.cos(0.00353 * cont + 2) * 127 + 128) / 255;
+            coso.color.r = -(Math.sin(0.00353 * cont + 4) * 127 + 128) / 255;
 
             /*coso.color.r = analyzer1.getAverageFrequency() / 255;
              coso.color.g = analyzer1.getAverageFrequency() / 255;
@@ -413,18 +459,20 @@ $(function () {
 
         if (elapsed >= "10") {
             mapGroup.position.z -= delta * player.speed;
-             mapGroup2.position.z -= delta * player.speed;
-             neonLights.position.z -= delta * player.speed;
+            mapGroup2.position.z -= delta * player.speed;
+            neonLights.position.z -= delta * player.speed;
+            obstGroup.position.z -= delta * player.speed;
         }
 
         if (mapGroup.position.z <= -480) {
             mapGroup.position.z = 0;
             mapGroup2.position.z = 0;
             neonLights.position.z = 0;
+            obstGroup.position.z = 0;
         }
 
         //controls.update();
-        /*if (keyboard[87]) {
+        if (keyboard[87]) {
             camera.position.x -= Math.sin(camera.rotation.y) * 0.5;
             camera.position.z -= -Math.cos(camera.rotation.y) * 0.5;
 
@@ -458,7 +506,7 @@ $(function () {
         if (keyboard[39]) {
             camera.rotation.y += Math.PI * 0.02;
             camera.updateProjectionMatrix();
-        }*/
+        }
 
         //render3D.clearDepth();
         render3D.render(scene, camera);
