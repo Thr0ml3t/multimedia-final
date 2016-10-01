@@ -212,6 +212,7 @@ $(function () {
         light2 = new THREE.PointLight(0xffffff,1,30);
         light2.position.set(0,10,-5);
         light2.castShadow = true;
+        light2.intensity = 0;
         scene.add(light2);
 
         var sphereSize = 2;
@@ -284,6 +285,8 @@ $(function () {
 
         var delta = timer01.getDelta();
 
+        var elapsed = timer01.getElapsedTime();
+
         var randiiiC = "000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
 
         randiiiC = '0x'+randiiiC;
@@ -303,29 +306,44 @@ $(function () {
 
         cont++;
         //$("#score").text("Intensidad Luz: " + analyzer1.getAverageFrequency() / 50 + "Distancia: " + analyzer1.getAverageFrequency());
-        $("#inte").text("Intensidad: " + analyzer1.getAverageFrequency()/100);
-        $("#dist").text("Distancia: " + analyzer1.getAverageFrequency());
-        $("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
-        light2.intensity = analyzer1.getAverageFrequency() / 100;
+        $("#inte").text("Tiempo: " + timer01.getElapsedTime());
+        $("#dist").text("MapGroup Z: " + mapGroup.position.z);
+        //$("#cR").text("Color: " + (Math.sin(0.01*cont + 0) * 127 + 128)/255 + "," + (Math.sin(0.01*cont + 2) * 127 + 128)/255 + "," +(Math.sin(0.01*cont + 4) * 127 + 128)/255);
+
+
+        if(elapsed >= "5" && elapsed <= "10"){
+            light2.intensity += delta * 0.1;
+        }
         light2.distance = analyzer1.getAverageFrequency();
 
         if(taskF){
-            coso.emissive.r = (Math.sin(0.0353*cont + 0) * 127 + 128)/255;
-            coso.emissive.g = (Math.sin(0.0353*cont + 2) * 127 + 128)/255;
-            coso.emissive.b = (Math.sin(0.0353*cont + 4) * 127 + 128)/255;
+            coso.emissive.r = (Math.sin(0.00353*cont) * 127 + 128)/255;
+            coso.emissive.g = (Math.sin(0.00353*cont + 2) * 127 + 128)/255;
+            coso.emissive.b = (Math.sin(0.00353*cont + 4) * 127 + 128)/255;
 
-            coso.color.r = analyzer1.getAverageFrequency() / 255;
+
+            coso.color.g = (Math.sin(0.00353*cont) * 127 + 128)/255;
+            coso.color.b = (Math.sin(0.00353*cont + 2) * 127 + 128)/255;
+            coso.color.r = (Math.sin(0.00353*cont + 4) * 127 + 128)/255;
+
+            /*coso.color.r = analyzer1.getAverageFrequency() / 255;
             coso.color.g = analyzer1.getAverageFrequency() / 255;
-            coso.color.b = analyzer1.getAverageFrequency() / 255;
+            coso.color.b = analyzer1.getAverageFrequency() / 255;*/
 
             coso.emissiveIntensity = analyzer1.getAverageFrequency() / 255;
         }
 
         ///phong1SG
 
+        if(elapsed >= "10"){
+            mapGroup.position.z -= delta * 20;
+            mapGroup2.position.z -= delta * 20;
+        }
 
-        /*mapGroup.position.z -= delta * 50;
-        mapGroup2.position.z -= delta * 50;*/
+        if(mapGroup.position.z <= -280){
+            mapGroup.position.z = 0;
+            mapGroup2.position.z = 0;
+        }
 
         //controls.update();
         if(keyboard[87]) {

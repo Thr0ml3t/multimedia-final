@@ -36,8 +36,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="318" column="64" selection-start-line="318" selection-start-column="64" selection-end-line="318" selection-end-column="64" />
+            <state relative-caret-position="691">
+              <caret line="342" column="32" selection-start-line="342" selection-start-column="32" selection-end-line="342" selection-end-column="32" />
               <folding>
                 <element signature="e#0#42#0" expanded="false" />
               </folding>
@@ -48,7 +48,7 @@
       <file leaf-file-name="p11.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/modelos/pasillos/p11.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
+            <state relative-caret-position="833">
               <caret line="49" column="25" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="25" />
               <folding />
             </state>
@@ -58,7 +58,7 @@
       <file leaf-file-name="main.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/css/main.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
+            <state relative-caret-position="714">
               <caret line="42" column="14" selection-start-line="42" selection-start-column="14" selection-end-line="42" selection-end-column="14" />
               <folding />
             </state>
@@ -122,6 +122,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -254,7 +255,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -343,12 +343,13 @@
       <workItem from="1475157231212" duration="18843000" />
       <workItem from="1475212892426" duration="1800000" />
       <workItem from="1475218079853" duration="902000" />
-      <workItem from="1475245992134" duration="8550000" />
+      <workItem from="1475245992134" duration="12051000" />
+      <workItem from="1475280808323" duration="803000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46859000" />
+    <option name="totallyTimeSpent" value="51163000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1928" y="-8" width="1936" height="1056" extended-state="6" />
@@ -388,6 +389,40 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#42#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/modelos/pasillos/p11.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="49" column="25" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="42" column="14" selection-start-line="42" selection-start-column="14" selection-end-line="42" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="527">
@@ -600,7 +635,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
+        <state relative-caret-position="714">
           <caret line="42" column="14" selection-start-line="42" selection-start-column="14" selection-end-line="42" selection-end-column="14" />
           <folding />
         </state>
@@ -616,7 +651,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/modelos/pasillos/p11.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
+        <state relative-caret-position="833">
           <caret line="49" column="25" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="25" />
           <folding />
         </state>
@@ -624,8 +659,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
-          <caret line="318" column="64" selection-start-line="318" selection-start-column="64" selection-end-line="318" selection-end-column="64" />
+        <state relative-caret-position="691">
+          <caret line="342" column="32" selection-start-line="342" selection-start-column="32" selection-end-line="342" selection-end-column="32" />
           <folding>
             <element signature="e#0#42#0" expanded="false" />
           </folding>
