@@ -529,10 +529,11 @@ $(function () {
 
         camera.position.x += delta * player.slideSpeed;
 
-        mapGroup.rotation.z = delta *player.slideSpeed * 2.0;
-        mapGroup2.rotation.z = delta * player.slideSpeed * 2.0;
-        neonLights.rotation.z = delta * player.slideSpeed * 2.0;
-        obstGroup.rotation.z = delta * player.slideSpeed * 2.0;
+        mapGroup.rotation.z = delta *player.slideSpeed * 0.38;
+        mapGroup2.rotation.z = delta * player.slideSpeed * 0.38;
+        neonLights.rotation.z = delta * player.slideSpeed * 0.38;
+        obstGroup.rotation.z = delta * player.slideSpeed * 0.38;
+
 
 
         //console.log(player.slideSpeed);
