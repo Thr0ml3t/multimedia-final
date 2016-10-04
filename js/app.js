@@ -10,7 +10,15 @@ $(function () {
 
     var keyboard = {};
 
-    var player = {height: 5.0, speed: 5.0, maxSpeed: 40, acceleration: 0.1};
+    var player = {  height: 5.0,
+                    speed: 5.0,
+                    maxSpeed: 40,
+                    acceleration: 0.1,
+                    slideSpeed: 0,
+                    slideAcceleration: 5.0,
+                    maxSideSpeed: 20,
+                    sliding: true
+    };
 
     var mapGroup, mapGroup2, neonLights;
 
@@ -390,10 +398,19 @@ $(function () {
 
         if (task2) {
             var temp;
+
             for (var i = 0; i < 13; i++) {
                 temp = obsIzq.clone();
+                var bbox = new THREE.BoundingBoxHelper(temp,0xff0000);
+
                 temp.position.z = (40 * i) + 20;
+                bbox.update();
+
+
+
+
                 obstGroup.add(temp);
+                obstGroup.add(bbox);
             }
             scene.add(obstGroup);
             task2 = false;
@@ -407,11 +424,6 @@ $(function () {
 
         var elapsed = timer01.getElapsedTime();
 
-        var randiiiC = "000000".replace(/0/g, function () {
-            return (~~(Math.random() * 16)).toString(16);
-        });
-
-        randiiiC = '0x' + randiiiC;
 
         if (!last || now - last >= 352) {
             last = now;
@@ -472,7 +484,7 @@ $(function () {
         }
 
         //controls.update();
-        if (keyboard[87]) {
+        /*if (keyboard[87]) {
             camera.position.x -= Math.sin(camera.rotation.y) * 0.5;
             camera.position.z -= -Math.cos(camera.rotation.y) * 0.5;
 
@@ -496,9 +508,36 @@ $(function () {
             light2.position.z += -Math.cos(camera.rotation.y) * 0.5;
 
             camera.updateProjectionMatrix();
+        }*/
+
+
+        if(keyboard[65]) { // Tecla A
+            player.slideSpeed += player.slideAcceleration;
+            player.slideSpeed = Math.min(player.slideSpeed,player.maxSideSpeed);
+        }else if(keyboard[68]) { // Tecla D
+            player.slideSpeed -= player.slideAcceleration;
+            player.slideSpeed = Math.max(player.slideSpeed,-player.maxSideSpeed);
+        }else{
+            player.slideSpeed *= 0.8;
         }
 
-        if (keyboard[37]) {
+        var next = camera.position.x + delta * player.slideSpeed;
+
+        if(next > 7 || next < -7){
+            player.slideSpeed = -player.slideSpeed * 1;
+        }
+
+        camera.position.x += delta * player.slideSpeed;
+
+        mapGroup.rotation.z = delta *player.slideSpeed * 2.0;
+        mapGroup2.rotation.z = delta * player.slideSpeed * 2.0;
+        neonLights.rotation.z = delta * player.slideSpeed * 2.0;
+        obstGroup.rotation.z = delta * player.slideSpeed * 2.0;
+
+
+        //console.log(player.slideSpeed);
+
+        /*if (keyboard[37]) {
             camera.rotation.y -= Math.PI * 0.02;
             camera.updateProjectionMatrix();
         }
@@ -506,9 +545,9 @@ $(function () {
         if (keyboard[39]) {
             camera.rotation.y += Math.PI * 0.02;
             camera.updateProjectionMatrix();
-        }
+        }*/
 
-        //render3D.clearDepth();
+
         render3D.render(scene, camera);
 
     }
