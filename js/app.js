@@ -10,14 +10,18 @@ $(function () {
 
     var keyboard = {};
 
-    var player = {  height: 5.0,
+    var player = {  height: 6.0,
+                    minHeight: 1.0,
+                    maxHeight: 12.0,
                     speed: 5.0,
                     maxSpeed: 40,
                     acceleration: 0.1,
                     slideSpeed: 0,
                     slideAcceleration: 5.0,
                     maxSideSpeed: 20,
-                    sliding: true
+                    pitchSpeed: 0,
+                    pitchAcceleration: 0.5,
+                    pitchMaxSpeed: 20
     };
 
     var mapGroup, mapGroup2, neonLights;
@@ -34,6 +38,10 @@ $(function () {
     var taskF = false;
 
     var task2 = false;
+
+    var task3 = false;
+
+    var emissiveM;
 
     var obsIzq, matObstaculo, obstGroup;
 
@@ -73,7 +81,7 @@ $(function () {
         var game = $("#game");
         aspect = game.innerWidth() / game.innerHeight();
 
-        camera = new THREE.PerspectiveCamera(103, aspect, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 1000);
 
         listener = new THREE.AudioListener();
 
@@ -96,7 +104,8 @@ $(function () {
 
         neonMaterial = new THREE.MeshPhongMaterial({
             color: 0xffffff,
-            emissive: 0xffffff
+            emissive: 0xffffff,
+            emissiveIntensity: 0
         });
         neonMaterial.name = "NeonMat";
 
@@ -155,7 +164,9 @@ $(function () {
 
                         copy.scale.set(5, 5, 5);
                         copy.rotation.set(0, Math.PI / 2, 0);
-                        copy.position.z = (40 * i) - 0.05;
+                        copy.position.x = 0.08;
+                        copy.position.y = 0.14;
+                        copy.position.z = (40 * i) - 0.07;
 
                         neonLights.add(copy);
                     }
@@ -171,7 +182,16 @@ $(function () {
 
         var promiseTexture = new Promise(function (resolve, reject) {
             mapLoader.load(
-                'js/modelos/pasillos/emmap.jpg',
+                'js/modelos/pasillos/map_light.jpg',
+                function (texture) {
+                    resolve(texture);
+                }
+            );
+        });
+
+        var pppTexture = new Promise(function (resolve, reject) {
+            mapLoader.load(
+                'js/modelos/pasillos/map_diff.jpg',
                 function (texture) {
                     resolve(texture);
                 }
@@ -183,11 +203,18 @@ $(function () {
             coso = material;
 
             promiseTexture.then(function (emmiMap) {
-                //coso.emissiveMap = emmiMap;
+                coso.emissiveMap = emmiMap;
+                pppTexture.then(function (diffText) {
+                    coso.map = diffText;
+                    coso.needsUpdate = true;
+                    //taskf = true;
+                });
             });
 
-            taskF = true;
+
+            //taskF = true;
         });
+
 
 
         loader.load(
@@ -211,7 +238,7 @@ $(function () {
 
                     copy.scale.set(5, 5, 5);
                     copy.rotation.set(0, Math.PI / 2, 0);
-                    copy.position.y = 0.14;
+                    copy.position.y = 0.12;
                     copy.position.x = 0.16;
                     copy.position.z = (40 * i) + 20;
 
@@ -221,6 +248,8 @@ $(function () {
 
                 mapGroup2.name = "ps2";
                 scene.add(mapGroup2);
+
+                taskF = true;
 
                 /*mesh.position.x = 44.45;
                  mesh.position.z = -0.5;
@@ -312,10 +341,9 @@ $(function () {
 
         var color = "0x" + randColor();
 
-        light2 = new THREE.PointLight(0xffffff, 1, 30);
+        light2 = new THREE.PointLight(0xffffff, 0, 0);
         light2.position.set(0, 10, -5);
         light2.castShadow = true;
-        light2.intensity = 0;
 
 
         scene.add(light2);
@@ -452,11 +480,24 @@ $(function () {
         light2.distance = analyzer1.getAverageFrequency();
 
         if (taskF) {
+
+
+
+            /*var cost = neonLights.children;
+
+            if (task3){
+                cost[0].material.materials[0].emissiveMap = emissiveM;
+                //console.log(cost[0].material.materials[0].emissiveMap);
+                task3 = false;
+                taskF = false;
+            }*/
+
+
             coso.emissive.r = (Math.sin(0.00353 * cont) * 127 + 128) / 255;
             coso.emissive.g = (Math.cos(0.00353 * cont + 2) * 127 + 128) / 255;
-            coso.emissive.b = -(Math.sin(0.00353 * cont + 4) * 127 + 128) / 255 * 0.
+            coso.emissive.b = -(Math.sin(0.00353 * cont + 4) * 127 + 128) / 255;
 
-            coso.color.g = (Math.sin(0.00353 * cont) * 127 + 128) / 255;
+           /* coso.color.g = (Math.sin(0.00353 * cont) * 127 + 128) / 255;
             coso.color.b = (Math.cos(0.00353 * cont + 2) * 127 + 128) / 255;
             coso.color.r = -(Math.sin(0.00353 * cont + 4) * 127 + 128) / 255;
 
@@ -511,10 +552,10 @@ $(function () {
         }*/
 
 
-        if(keyboard[65]) { // Tecla A
+        if(keyboard[65] || keyboard[37]) { // Tecla A
             player.slideSpeed += player.slideAcceleration;
             player.slideSpeed = Math.min(player.slideSpeed,player.maxSideSpeed);
-        }else if(keyboard[68]) { // Tecla D
+        }else if(keyboard[68] || keyboard[39]) { // Tecla D
             player.slideSpeed -= player.slideAcceleration;
             player.slideSpeed = Math.max(player.slideSpeed,-player.maxSideSpeed);
         }else{
@@ -529,11 +570,37 @@ $(function () {
 
         camera.position.x += delta * player.slideSpeed;
 
-        mapGroup.rotation.z = delta *player.slideSpeed * 0.38;
-        mapGroup2.rotation.z = delta * player.slideSpeed * 0.38;
-        neonLights.rotation.z = delta * player.slideSpeed * 0.38;
-        obstGroup.rotation.z = delta * player.slideSpeed * 0.38;
+        mapGroup.rotation.z = delta *player.slideSpeed * 0.28;
+        mapGroup2.rotation.z = delta * player.slideSpeed * 0.28;
+        neonLights.rotation.z = delta * player.slideSpeed * 0.28;
+        obstGroup.rotation.z = delta * player.slideSpeed * 0.28;
 
+        if(keyboard[87]) {
+            player.pitchSpeed += player.pitchAcceleration;
+            player.pitchSpeed = Math.min(player.pitchSpeed,player.pitchMaxSpeed);
+        }else if(keyboard[83]) {
+            player.pitchSpeed -= player.pitchAcceleration;
+            player.pitchSpeed = Math.min(player.pitchSpeed,player.pitchMaxSpeed);
+        }else {
+            player.pitchSpeed *= 0.8;
+        }
+
+        var next2 = camera.position.y + delta * player.pitchSpeed;
+
+        //console.log(next2);
+
+        if(next2 < player.minHeight || next2 > player.maxHeight){
+            player.pitchSpeed = -player.pitchSpeed * 1;
+        }
+
+        camera.position.y += delta * player.pitchSpeed;
+
+        /*mapGroup.rotation.x = delta *player.pitchSpeed * 0.28;
+        mapGroup2.rotation.x = delta * player.pitchSpeed * 0.28;
+        neonLights.rotation.x = delta * player.pitchSpeed * 0.28;
+        obstGroup.rotation.x = delta * player.pitchSpeed * 0.28;*/
+
+        //console.log(camera.position.y);
 
 
         //console.log(player.slideSpeed);
