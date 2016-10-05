@@ -20,7 +20,7 @@ $(function () {
                     slideAcceleration: 5.0,
                     maxSideSpeed: 20,
                     pitchSpeed: 0,
-                    pitchAcceleration: 0.5,
+                    pitchAcceleration: 3.0,
                     pitchMaxSpeed: 20
     };
 
@@ -615,6 +615,7 @@ $(function () {
             camera.updateProjectionMatrix();
         }*/
 
+        console.log(player.pitchAcceleration);
 
         render3D.render(scene, camera);
 
