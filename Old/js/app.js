@@ -622,7 +622,7 @@ $(function () {
             camera.updateProjectionMatrix();
         }*/
 
-        console.log(player.pitchAcceleration);
+        //console.log(player.pitchAcceleration);
 
         render3D.render(scene, camera);
 
