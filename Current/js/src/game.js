@@ -11,6 +11,8 @@ var TEGame = function () {
 
     var movingGroup;
 
+    var mainLight;
+
     var models = {
         px1: {
             file: "assets/pasillos/p1.js",
@@ -61,8 +63,6 @@ var TEGame = function () {
             loadComplete();
         };
 
-
-
         // Carga todos los modelos en mi arreglo
         for(var _key in models){
             (function (key) {
@@ -93,9 +93,7 @@ var TEGame = function () {
                     function (buffer) {
                         var aud = new THREE.Audio(listener);
                         aud.setBuffer(buffer);
-                        aud.autoplay = true;
-
-                        playList[key].aud = aud;
+                        aud.play();
                         /*playList[key].aud = new THREE.Audio(listener);
                         playList[key].aud.setBuffer(buffer);
                         playList[key].aud.play();*/
@@ -148,10 +146,6 @@ var TEGame = function () {
             meshes["p2"+i].position.z = (40 * i) + 20;
             movingGroup.add(meshes["p2"+i]);
         }
-
-
-        console.log(playList.bgGame);
-        //playList.bgGame.aud.play();
 
         /*var audi = new THREE.Audio(listener);
         audi.setBuffer(playList.bgGame.buffer);*/

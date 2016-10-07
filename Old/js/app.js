@@ -10,6 +10,8 @@ $(function () {
 
     var keyboard = {};
 
+    var stats;
+
     var player = {  height: 6.0,
                     minHeight: 1.0,
                     maxHeight: 12.0,
@@ -77,6 +79,8 @@ $(function () {
         timer01 = new THREE.Clock();
         scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000000, 0.01);
+
+
 
         var game = $("#game");
         aspect = game.innerWidth() / game.innerHeight();
@@ -404,6 +408,10 @@ $(function () {
         render3D.shadowMapWidth = 1024;
         render3D.shadowMapHeight = 1024;
 
+        stats = new Stats();
+        stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+        document.body.appendChild( stats.dom );
+
 
         document.getElementById("game").appendChild(render3D.domElement);
 
@@ -439,7 +447,7 @@ $(function () {
     function animate(now) {
         requestAnimationFrame(animate);
 
-
+        stats.begin();
         if (task2) {
             var temp;
 
@@ -598,7 +606,7 @@ $(function () {
             player.pitchSpeed -= player.pitchAcceleration;
             player.pitchSpeed = Math.min(player.pitchSpeed,player.pitchMaxSpeed);
         }else {
-            player.pitchSpeed *= 0.8;
+            player.pitchSpeed *= 0.3;
         }
 
         var next2 = camera.position.y + delta * player.pitchSpeed;
@@ -623,6 +631,7 @@ $(function () {
         }*/
 
         //console.log(player.pitchAcceleration);
+        stats.end();
 
         render3D.render(scene, camera);
 

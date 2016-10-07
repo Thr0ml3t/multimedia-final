@@ -17,6 +17,7 @@ var TEMain = function () {
     var sceneLoading,mainScene,menuScene;
     var camera,renderer,audioListener;
 
+    var stats;
 
 
     function init() {
@@ -25,6 +26,10 @@ var TEMain = function () {
         menuScene = new THREE.Scene();
 
         THREE.Cache.enabled = true;
+
+        stats = new Stats();
+        stats.showPanel(1);
+        document.body.appendChild( stats.dom );
 
 
         mainScene.fog = new THREE.FogExp2(0x000000, 0.01);
@@ -64,12 +69,13 @@ var TEMain = function () {
         var h = window.innerHeight;
 
         renderer.setSize( w ,h );
-        /*camera.aspect = w / h;*/
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
     }
 
     function render() {
         requestAnimationFrame(render);
-
+        stats.begin();
         if(TEConfig.isMenu){
 
             TEMenu.animateMenu();
@@ -84,6 +90,7 @@ var TEMain = function () {
                 //console.log("Main Render");
             }
         }
+        stats.end();
     }
 
     return {
