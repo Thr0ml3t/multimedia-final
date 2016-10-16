@@ -5,48 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Noto+Sans|Righteous" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/css?family=Iceland|Noto+Sans" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animate.css">
 
+
 <body>
-
-<!--<div class="container">
-
-    <div class="gui">
-        &lt;!&ndash;
-        <div class="menu-container">
-            <div class="menu animated fadeIn">
-
-            </div>
-        </div>
-        &ndash;&gt;
-        <div id="score">
-            <p id="inte"></p>
-            <p id="dist"></p>
-            <p id="cR"></p>
-            <p id="cG"></p>
-            <p id="cB"></p>
-        </div>
-    </div>
-
-
-</div>-->
 
 <div class="game" id="game"></div>
 
 <div id="myNav" class="overlay">
-
-    <!-- Button to close the overlay navigation -->
-    <!--<a href="javascript:void(0)" id="closeNav" class="closebtn">&times;</a>-->
-
     <!-- Overlay content -->
     <div class="overlay-content">
-        <a id="startGame" href="#">Jugar</a>
-        <a href="#">Puntajes</a>
-        <a href="#">Acerca</a>
+        <nav id="menu">
+            <a id="startGame" href="#">Jugar</a>
+            <a id="highScores" href="#">Puntajes</a>
+            <a id="credits" href="#">Acerca</a>
+        </nav>
     </div>
-
 </div>
 
 
@@ -58,6 +35,7 @@
 <script src="js/vendor/ThreeJS/stats.min.js"></script>
 
 <!-- Main App Scripts -->
+<script src="js/src/utils.js"></script>
 <script src="js/src/app.js"></script>
 <script src="js/src/menu.js"></script>
 <script src="js/src/game.js"></script>

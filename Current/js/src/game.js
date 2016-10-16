@@ -13,6 +13,8 @@ var TEGame = function () {
 
     var mainLight;
 
+    var cam;
+
     var models = {
         px1: {
             file: "assets/pasillos/p1.js",
@@ -43,6 +45,10 @@ var TEGame = function () {
         loadingScene = TEMain.getLoadingScene();
         mainScene = TEMain.getMainScene();
         listener = TEMain.getAudioListener();
+        cam = TEMain.getCamera();
+
+        cam.far = 1000;
+        cam.updateProjectionMatrix();
 
         movingGroup = new THREE.Object3D();
 
@@ -152,7 +158,7 @@ var TEGame = function () {
         mainScene.add(movingGroup);
 
 
-        TEConfig.isLoading = false;
+        TEConfig.mode = TEConfig.modes.game;
     }
 
     return{

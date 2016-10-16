@@ -7,6 +7,12 @@ var TEConfig = {
     isMenu: true,
     isLoading: true,
     isPlaying: false,
+    modes: {
+        menu: 1,
+        loading: 2,
+        game: 3
+    },
+    mode: 1,
 
     level_W: 560,
     level_D: 20,
@@ -33,7 +39,7 @@ var TEMain = function () {
 
 
         mainScene.fog = new THREE.FogExp2(0x000000, 0.01);
-        camera = new THREE.PerspectiveCamera( 90, window.innerWidth/window.innerHeight , 1, 100000 );
+        camera = new THREE.PerspectiveCamera( 90, window.innerWidth/window.innerHeight , 0.1, 100 );
 
         camera.position.set(0, 10, -5);
         camera.lookAt(new THREE.Vector3(0, 10, 0));
@@ -75,30 +81,46 @@ var TEMain = function () {
 
     function render() {
         requestAnimationFrame(render);
-        stats.begin();
-        if(TEConfig.isMenu){
 
-            TEMenu.animateMenu();
-            renderer.render(menuScene,camera);
-        }else{
-            if(TEConfig.isLoading){
+        stats.begin();
+
+        switch (TEConfig.mode){
+            case 1:
+                TEMenu.animateMenu();
+                renderer.render(menuScene,camera);
+                break;
+            case 2:
                 TEGame.loadinAnimate();
                 renderer.render(sceneLoading,camera);
                 console.log("Cargando");
-            }else {
+                break;
+            case 3:
                 renderer.render(mainScene,camera);
-                //console.log("Main Render");
-            }
+                break;
+            default:
+                break;
         }
+
         stats.end();
     }
 
     return {
         init: init,
-        getMenuScene: function(){return menuScene;},
-        getMainScene: function(){return mainScene;},
-        getLoadingScene: function(){return sceneLoading;},
-        getAudioListener: function(){return audioListener;}
+        getMenuScene: function(){
+            return menuScene;
+        },
+        getMainScene: function(){
+            return mainScene;
+        },
+        getLoadingScene: function(){
+            return sceneLoading;
+        },
+        getAudioListener: function(){
+            return audioListener;
+        },
+        getCamera: function(){
+            return camera;
+        }
     }
 
 }();
@@ -109,10 +131,6 @@ $(document).ready(function () {
     TEMenu.openMenu();
 
     TEMain.init();
-
-    $("#closeNav").click(function () {
-        TEMenu.closeMenu();
-    });
 
     $("#startGame").click(function () {
         TEGame.init();
