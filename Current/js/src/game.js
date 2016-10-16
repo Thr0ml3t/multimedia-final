@@ -15,18 +15,26 @@ var TEGame = function () {
 
     var cam;
 
-    var models = {
+    var assets = {
         px1: {
+            type: 'model',
             file: "assets/pasillos/p1.js",
             mesh: null
         },
         px2: {
+            type: 'model',
             file: "assets/pasillos/p2.js",
             mesh: null
         },
         neon: {
+            type: 'model',
             file: "assets/pasillos/neon.js",
             mesh: null
+        },
+        bgMusic: {
+            type: 'sound',
+            file: "assets/sonidos/bg_game.ogg",
+            audio: null
         }
     };
 
@@ -34,8 +42,7 @@ var TEGame = function () {
         bgGame: {
             file: "assets/sonidos/bg_game.ogg",
             aud: null
-        },
-
+        }
     };
 
     var meshes = {};
@@ -62,50 +69,53 @@ var TEGame = function () {
 
         loaderManager.onProgress = function (item, loaded, total) {
             console.log(item,loaded,total);
+
+            $("#loading").empty();
+            $("#loading").append('Cargando ' + (loaded / total * 100) + '%' );
+            //console.log( (loaded / total * 100) + '% loaded' );
         };
-        
+
         loaderManager.onLoad = function () {
             console.log("Se Cargaron todos los assets!");
             loadComplete();
         };
 
-        // Carga todos los modelos en mi arreglo
-        for(var _key in models){
+        // Carga todos los assets en mi arreglo
+        for(var _key in assets){
             (function (key) {
-                jsonLoader.load(
-                    models[key].file,
-                    function (geometry, materials) {
-                        var material = new THREE.MeshFaceMaterial(materials);
-                        var mesh = new THREE.Mesh(geometry, material);
+                switch (assets[key].type) {
+                    case 'model':
+                        jsonLoader.load(
+                            assets[key].file,
+                            function (geometry, materials) {
+                                var material = new THREE.MeshFaceMaterial(materials);
+                                var mesh = new THREE.Mesh(geometry, material);
 
-                        mesh.traverse(function (node) {
-                           if(node instanceof THREE.Mesh){
-                               node.castShadow = true;
-                               node.receiveShadow = true;
-                           }
-                        });
+                                mesh.traverse(function (node) {
+                                    if(node instanceof THREE.Mesh){
+                                        node.castShadow = true;
+                                        node.receiveShadow = true;
+                                    }
+                                });
+                                assets[key].mesh = mesh;
+                            }
+                        );
+                        break;
+                    case 'sound':
+                        audioLoader.load(
+                            assets[key].file,
+                            function (buffer) {
+                                var sound = new THREE.Audio(listener);
+                                sound.autoplay = true;
+                                sound.setBuffer(buffer);
+                                sound.setVolume(0.5);
 
-                        models[key].mesh = mesh;
-                    }
-                );
+                                assets[key].aud = sound;
+                            }
+                        );
+                        break;
+                }
             })(_key);
-        }
-
-        //Cargamos todos los sonidos en el arreglo :D
-        for(var _keys in playList){
-            (function (key) {
-                audioLoader.load(
-                    playList[key].file,
-                    function (buffer) {
-                        var aud = new THREE.Audio(listener);
-                        aud.setBuffer(buffer);
-                        aud.play();
-                        /*playList[key].aud = new THREE.Audio(listener);
-                        playList[key].aud.setBuffer(buffer);
-                        playList[key].aud.play();*/
-                    }
-                );
-            })(_keys);
         }
 
     }
@@ -136,7 +146,7 @@ var TEGame = function () {
     // No muestra la Escena principal hasta terminar de construir todo el nivel
     function loadComplete() {
         for (var i = 0; i < 15; i++){
-            meshes["p1"+i] = models.px1.mesh.clone();
+            meshes["p1"+i] = assets.px1.mesh.clone();
             meshes["p1"+i].name = "Px1-"+i;
             meshes["p1"+i].scale.set(5,5,5);
             meshes["p1"+i].rotation.set(0,Math.PI/2,0);
@@ -145,7 +155,7 @@ var TEGame = function () {
         }
 
         for (var i = 0; i < 15; i++){
-            meshes["p2"+i] = models.px2.mesh.clone();
+            meshes["p2"+i] = assets.px2.mesh.clone();
             meshes["p2"+i].name = "Px2-"+i;
             meshes["p2"+i].scale.set(5,5,5);
             meshes["p2"+i].rotation.set(0,Math.PI/2,0);
@@ -153,16 +163,20 @@ var TEGame = function () {
             movingGroup.add(meshes["p2"+i]);
         }
 
-        /*var audi = new THREE.Audio(listener);
-        audi.setBuffer(playList.bgGame.buffer);*/
         mainScene.add(movingGroup);
 
 
         TEConfig.mode = TEConfig.modes.game;
+
+        $("#loading").empty();
+        $("#loading").removeClass();
     }
 
     return{
         init: init,
-        loadinAnimate: loadinAnimate
+        loadinAnimate: loadinAnimate,
+        getAudio: function () {
+            return assets['bgMusic'].aud;
+        }
     }
 }();

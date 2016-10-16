@@ -55,6 +55,15 @@ body {
     animation: neon 1.5s ease-in-out infinite alternate;
 }
 
+#loading {
+    color: #ffffff;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 32px;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    /*opacity: 0;*/
+}
+
 
 @-webkit-keyframes neon {
     from {

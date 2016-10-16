@@ -34,7 +34,7 @@ var TEMain = function () {
         THREE.Cache.enabled = true;
 
         stats = new Stats();
-        stats.showPanel(1);
+        stats.showPanel(0);
         document.body.appendChild( stats.dom );
 
 
@@ -132,8 +132,17 @@ $(document).ready(function () {
 
     TEMain.init();
 
+    var menuSound = new Howl({
+        src: ['assets/sonidos/menu/hover-menu.WAV'],
+        volume: 0.5
+    });
+
     $("#startGame").click(function () {
         TEGame.init();
         TEMenu.startGame();
+    });
+
+    $("#menu a").mouseenter(function () {
+        menuSound.play();
     });
 });

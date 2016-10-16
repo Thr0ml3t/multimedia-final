@@ -29,6 +29,7 @@ var TEMenu = function () {
     function startGame() {
         $("#menu").removeClass("animated zoomInDown");
         $("#menu").addClass("animated zoomOutDown");
+        $("#loading").append('Cargando 0%' );
         TEConfig.mode = TEConfig.modes.loading;
         /*TEConfig.isLoading = true;
         TEConfig.isMenu = false;*/
@@ -42,6 +43,8 @@ var TEMenu = function () {
 
         cam.far = 2000;
         cam.updateProjectionMatrix();
+
+
 
         for ( var z= -1000; z < 1000; z+=20 ) {
 
