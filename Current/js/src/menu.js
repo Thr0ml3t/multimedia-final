@@ -11,6 +11,10 @@ var TEMenu = function () {
 
     function openMenu() {
         $("#menu").addClass("animated zoomInDown");
+        $("#menu").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+            $("#menu").removeClass("animated zoomInDown");
+        });
+        $("#menu").show();
         TEConfig.mode = TEConfig.modes.menu;
         /*TEConfig.isMenu = true;*/
         //$("#myNav").fadeIn();
@@ -19,17 +23,20 @@ var TEMenu = function () {
     };
 
     function closeMenu() {
-        $("#menu").removeClass("animated zoomInDown")
+        $("#menu").removeClass("animated zoomInDown");
         $("#menu").addClass("animated zoomOutDown");
+        $("#menu").hide();
         //$("#myNav").fadeOut(400);
         /*$("#myNav").css("opacity","0");
         $("#myNav").css("z-index","-1");*/
     };
 
     function startGame() {
-        $("#menu").removeClass("animated zoomInDown");
         $("#menu").addClass("animated zoomOutDown");
         $("#loading").append('Cargando 0%' );
+        $("#menu").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+            $("#menu").hide();
+        });
         TEConfig.mode = TEConfig.modes.loading;
         /*TEConfig.isLoading = true;
         TEConfig.isMenu = false;*/
@@ -70,11 +77,11 @@ var TEMenu = function () {
         }
     };
 
-    function animateMenu() {
+    function animateMenu(delta) {
         for(var i=0; i<movingGroup.length; i++) {
             star = movingGroup[i];
 
-            star.position.z +=  i/10;
+            star.position.z +=  delta * i;
 
             if(star.position.z>2000) star.position.z-=3000;
 

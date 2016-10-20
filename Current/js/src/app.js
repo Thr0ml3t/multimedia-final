@@ -24,12 +24,15 @@ var TEMain = function () {
     var camera,renderer,audioListener;
 
     var stats;
+    var timer01;
 
 
     function init() {
         sceneLoading = new THREE.Scene();
         mainScene = new THREE.Scene();
         menuScene = new THREE.Scene();
+
+        timer01 = new THREE.Clock();
 
         THREE.Cache.enabled = true;
 
@@ -63,6 +66,7 @@ var TEMain = function () {
         resize();
         render();
 
+        timer01.start();
     };
 
     $(window).resize(function() {
@@ -81,16 +85,16 @@ var TEMain = function () {
 
     function render() {
         requestAnimationFrame(render);
-
         stats.begin();
+        var delta = timer01.getDelta();
 
         switch (TEConfig.mode){
             case 1:
-                TEMenu.animateMenu();
+                TEMenu.animateMenu(delta);
                 renderer.render(menuScene,camera);
                 break;
             case 2:
-                TEGame.loadinAnimate();
+                TEGame.loadinAnimate(delta);
                 renderer.render(sceneLoading,camera);
                 console.log("Cargando");
                 break;
@@ -137,7 +141,13 @@ $(document).ready(function () {
         volume: 0.5
     });
 
+    var confirmSound = new Howl({
+        src: ['assets/sonidos/menu/confirm.WAV'],
+        volume: 0.5
+    });
+
     $("#startGame").click(function () {
+        confirmSound.play();
         TEGame.init();
         TEMenu.startGame();
     });

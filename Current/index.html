@@ -18,12 +18,16 @@
 <div id="myNav" class="overlay">
     <!-- Overlay content -->
     <div class="overlay-content">
-        <nav id="menu">
-            <a id="startGame" href="#">Jugar</a>
-            <a id="highScores" href="#">Puntajes</a>
-            <a id="credits" href="#">Acerca</a>
-        </nav>
+        <div id="menu">
+            <ul>
+                <li><a id="startGame" href="#">Jugar</a></li>
+                <li><a href="#">Puntajes</a></li>
+                <li><a href="#">Acerca</a></li>
+            </ul>
+        </div>
         <div id="loading" class="animated flash">
+        </div>
+        <div id="highscore" class="animated fadeOut">
         </div>
     </div>
 </div>
@@ -36,6 +40,12 @@
 <script src="js/vendor/ThreeJS/three.min.js"></script>
 <script src="js/vendor/ThreeJS/stats.min.js"></script>
 <script src="js/vendor/HowlerJS/howler.min.js"></script>
+
+<!--Extras-->
+<script src="js/vendor/ThreeJS/HorizontalBlurShader.js"></script>
+<script src="js/vendor/ThreeJS/VerticalBlurShader.js"></script>
+<script src="js/vendor/ThreeJS/CopyShader.js"></script>
+<script src="js/vendor/ThreeJS/EffectComposer.js"></script>
 
 <!-- Main App Scripts -->
 <script src="js/src/utils.js"></script>
