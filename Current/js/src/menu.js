@@ -121,12 +121,14 @@ var TEMenu = function () {
         finalScene.blendPass.uniforms["tAdd"].value = menuBlur.composer.renderTarget2.texture;
         finalScene.blendPass.uniforms["amount"].value = 2.0;
         finalScene.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+        finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
 
         finalScene.composer = new THREE.EffectComposer(renderer);
         finalScene.composer.addPass(finalScene.renderPass);
         finalScene.composer.addPass(finalScene.blendPass);
         finalScene.composer.addPass(finalScene.fxaaPass);
-        finalScene.blendPass.renderToScreen = true;
+        //finalScene.blendPass.renderToScreen = true;
+        finalScene.fxaaPass.renderToScreen = true;
 
         finalScene.composer.setSize(window.innerWidth,window.innerHeight);
 
@@ -158,13 +160,20 @@ var TEMenu = function () {
         //renderer.render(menuBlur.scene,cam);
     };
 
+
+    function resizeMenu() {
+        finalScene.composer.setSize(window.innerWidth,window.innerHeight);
+        finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+    };
+
     return {
         openMenu: openMenu,
         closeMenu: closeMenu,
         startGame: startGame,
         init: init,
         animateMenu: animateMenu,
-        renderMenu: renderMenu
+        renderMenu: renderMenu,
+        resizeMenu: resizeMenu
     }
 
 }();

@@ -79,6 +79,9 @@ var TEMain = function () {
         var h = window.innerHeight;
 
         renderer.setSize( w ,h );
+
+        TEMenu.resizeMenu();
+
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
     }
