@@ -129,7 +129,7 @@ var TEGame = function () {
                             assets[key].file,
                             function (buffer) {
                                 var sound = new THREE.Audio(listener);
-                                sound.autoplay = true;
+                                //sound.autoplay = true;
                                 sound.setBuffer(buffer);
                                 sound.setVolume(0.5);
 

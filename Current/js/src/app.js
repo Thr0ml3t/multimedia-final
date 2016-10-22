@@ -59,7 +59,7 @@ var TEMain = function () {
 
         $("#game").append(renderer.domElement);
 
-        window.scene = mainScene;
+        window.scene = menuScene;
 
 
         TEMenu.init();
@@ -91,7 +91,8 @@ var TEMain = function () {
         switch (TEConfig.mode){
             case 1:
                 TEMenu.animateMenu(delta);
-                renderer.render(menuScene,camera);
+                TEMenu.renderMenu(delta);
+                //renderer.render(menuScene,camera);
                 break;
             case 2:
                 TEGame.loadinAnimate(delta);
@@ -124,6 +125,9 @@ var TEMain = function () {
         },
         getCamera: function(){
             return camera;
+        },
+        getRenderer: function () {
+            return renderer;
         }
     }
 
