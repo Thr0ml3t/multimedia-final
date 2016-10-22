@@ -144,7 +144,7 @@ var TEMenu = function () {
 
             star.position.z +=  posNew;
             star2.position.z +=  posNew;
-
+            
             if(star.position.z>1000){
                 star.position.z-=2000;
                 star2.position.z-=2000;
