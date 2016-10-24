@@ -47,13 +47,20 @@ var TEMenu = function () {
             $("#menu").hide();
         });
         TEConfig.mode = TEConfig.modes.loading;
+
+        dispose3(menuBlur.scene);
+        dispose3(finalScene.scene);
+
+        menuBlur = null;
+        finalScene = null;
+
         /*TEConfig.isLoading = true;
         TEConfig.isMenu = false;*/
         //$("#myNav").css("opacity","0");
     };
 
     function init() {
-        menuBlur.scene = TEMain.getMenuScene();
+        menuBlur.scene = new THREE.Scene();
 
         finalScene.scene = new THREE.Scene();
 
@@ -76,12 +83,17 @@ var TEMenu = function () {
             var sphere = new THREE.Mesh(geometry, material);
 
 
-            sphere.position.x = Math.random() * 1000 - 500;
-            sphere.position.y = Math.random() * 1000 - 500;
+            sphere.position.x = Math.floor(Math.random() * 2000) - 1000;
+            sphere.position.y = Math.floor(Math.random() * 2000) - 1000;
 
             sphere.position.z = z;
 
             sphere.scale.x = sphere.scale.y = 5;
+
+
+            sphere.material.emissive.r = (Math.sin(0.1 * z) * 127 + 128) / 255;
+            sphere.material.emissive.g = (Math.sin(0.2 * z) * 127 + 128) / 255;
+            sphere.material.emissive.b = (Math.sin(0.3 * z) * 127 + 128) / 255;
 
             menuBlur.scene.add(sphere);
             var clone = sphere.clone();
@@ -101,7 +113,6 @@ var TEMenu = function () {
         menuBlur.renderPass = new THREE.RenderPass(menuBlur.scene,cam);
         menuBlur.composer.addPass(menuBlur.renderPass);
 
-
         menuBlur.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
         menuBlur.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
         menuBlur.composer.addPass(menuBlur.blurPass);
@@ -110,8 +121,14 @@ var TEMenu = function () {
         menuBlur.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight;
         menuBlur.composer.addPass(menuBlur.blurPass2);
 
+        menuBlur.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+        menuBlur.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+        menuBlur.composer.addPass(menuBlur.fxaaPass);
+
         menuBlur.copyPass = new THREE.ShaderPass(THREE.CopyShader);
         menuBlur.composer.addPass(menuBlur.copyPass);
+
+
 
         menuBlur.composer.setSize(window.innerWidth,window.innerHeight);
 
@@ -119,7 +136,7 @@ var TEMenu = function () {
         finalScene.renderPass = new THREE.RenderPass(finalScene.scene,cam);
         finalScene.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
         finalScene.blendPass.uniforms["tAdd"].value = menuBlur.composer.renderTarget2.texture;
-        finalScene.blendPass.uniforms["amount"].value = 2.0;
+        finalScene.blendPass.uniforms["amount"].value = 7.0;
         finalScene.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
 
@@ -144,8 +161,8 @@ var TEMenu = function () {
 
             star.position.z +=  posNew;
             star2.position.z +=  posNew;
-            
-            if(star.position.z>1000){
+
+            if(star.position.z>2000){
                 star.position.z-=2000;
                 star2.position.z-=2000;
             }
@@ -157,13 +174,14 @@ var TEMenu = function () {
     function renderMenu(delta) {
         menuBlur.composer.render(delta);
         finalScene.composer.render(delta);
-        //renderer.render(menuBlur.scene,cam);
     };
 
 
     function resizeMenu() {
-        finalScene.composer.setSize(window.innerWidth,window.innerHeight);
-        finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+        if(finalScene != null){
+            finalScene.composer.setSize(window.innerWidth,window.innerHeight);
+            finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+        }
     };
 
     return {

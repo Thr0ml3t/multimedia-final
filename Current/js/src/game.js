@@ -3,13 +3,19 @@
  */
 
 var TEGame = function () {
-    var loadingScene,mainScene, listener;
+    var listener, renderer;
+
+    var neonComp = {};
+
+    var mainComp = {};
+
+    var loadingMap = {};
 
     var jsonLoader, audioLoader, textureLoader, loaderManager;
 
     var cubeLoading, cubeScaling = 0;
 
-    var movingGroup;
+    var movingGroup,movingGroup2;
 
     var mainLight;
 
@@ -51,28 +57,25 @@ var TEGame = function () {
         }
     };
 
-    var playList = {
-        bgGame: {
-            file: "assets/sonidos/bg_game.ogg",
-            aud: null
-        }
-    };
-
     var neonLightsMat;
 
     var meshes = {};
-    var sounds = {};
 
     function init() {
-        loadingScene = TEMain.getLoadingScene();
-        mainScene = TEMain.getMainScene();
+        loadingMap.scene = new THREE.Scene();
+        neonComp.scene = new THREE.Scene();
+        mainComp.scene = new THREE.Scene();
+        renderer = TEMain.getRenderer();
         listener = TEMain.getAudioListener();
         cam = TEMain.getCamera();
 
-        cam.far = 1000;
+
+
+        cam.far = 365;
         cam.updateProjectionMatrix();
 
         movingGroup = new THREE.Object3D();
+        movingGroup2 = new THREE.Object3D();
 
         loadingCreate();
 
@@ -83,7 +86,7 @@ var TEGame = function () {
 
         console.log("Iniciando Juego");
 
-        neonLightsMat = new THREE.MeshPhongMaterial({
+        neonLightsMat = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             emissive: 0xffffff,
             emissiveIntensity: 1
@@ -129,7 +132,7 @@ var TEGame = function () {
                             assets[key].file,
                             function (buffer) {
                                 var sound = new THREE.Audio(listener);
-                                //sound.autoplay = true;
+                                sound.autoplay = true;
                                 sound.setBuffer(buffer);
                                 sound.setVolume(0.5);
 
@@ -158,16 +161,28 @@ var TEGame = function () {
         );
 
         loadingLight= new THREE.AmbientLight(0xffffff, 0.2);
-        loadingScene.add(loadingLight);
+        loadingMap.scene.add(loadingLight);
 
         loadingLight = new THREE.PointLight(0xffffff, 0.8, 18);
         loadingLight.position.set(-3,6,-3);
-        loadingScene.add(loadingLight);
+        loadingMap.scene.add(loadingLight);
 
         cubeLoading.position.z = 5;
         cubeLoading.position.y = 10;
 
-        loadingScene.add(cubeLoading);
+        loadingMap.scene.add(cubeLoading);
+
+        loadingMap.renderPass = new THREE.RenderPass(loadingMap.scene,cam);
+        loadingMap.rgbPass = new THREE.ShaderPass(THREE.RGBShiftShader);
+        loadingMap.rgbPass.uniforms.amount.value = 0.1;
+        loadingMap.copyPass = new THREE.ShaderPass(THREE.CopyShader);
+
+        loadingMap.composer = new THREE.EffectComposer(renderer);
+        loadingMap.composer.addPass(loadingMap.renderPass);
+        loadingMap.composer.addPass(loadingMap.rgbPass);
+        loadingMap.composer.addPass(loadingMap.copyPass);
+        loadingMap.copyPass.renderToScreen = true;
+
     }
 
     function loadinAnimate(delta) {
@@ -185,6 +200,9 @@ var TEGame = function () {
 
         cubeLoading.scale.set(cubeScaling,cubeScaling,cubeScaling)
 
+
+        loadingMap.composer.render(delta);
+
     }
 
     // No muestra la Escena principal hasta terminar de construir todo el nivel
@@ -194,7 +212,7 @@ var TEGame = function () {
         neonLightsMat.map = assets.neonMapD.texture;
         neonLightsMat.needsUpdate = true;
 
-        for (var i = 0; i < 15; i++){
+        for (var i = 0; i < 5; i++){
             meshes["p1"+i] = assets.px1.mesh.clone();
             meshes["p1"+i].name = "Px1-"+i;
             meshes["p1"+i].scale.set(5,5,5);
@@ -203,7 +221,7 @@ var TEGame = function () {
             movingGroup.add(meshes["p1"+i]);
         }
 
-        for (var i = 0; i < 15; i++){
+        for (var i = 0; i < 5; i++){
             meshes["p2"+i] = assets.px2.mesh.clone();
             meshes["p2"+i].name = "Px2-"+i;
             meshes["p2"+i].scale.set(5,5,5);
@@ -212,7 +230,7 @@ var TEGame = function () {
             movingGroup.add(meshes["p2"+i]);
         }
 
-        for(var i = 0; i < 15; i++) {
+        for(var i = 0; i < 6; i++) {
             meshes["neon"+i] = assets.neon.mesh.clone();
             meshes["neon"+i].name = "Neon-"+i;
             meshes["neon"+i].scale.set(5,5,5);
@@ -224,17 +242,82 @@ var TEGame = function () {
             movingGroup.add(meshes["neon"+i]);
         }
 
-        mainScene.add(movingGroup);
+        for(var i = 0; i < 6; i++) {
+            meshes["neon"+i] = assets.neon.mesh.clone();
+            meshes["neon"+i].name = "Neon-"+i;
+            meshes["neon"+i].scale.set(5,5,5);
+            meshes["neon"+i].rotation.set(0,Math.PI/2,0);
+            meshes["neon"+i].position.x = 0.08;
+            meshes["neon"+i].position.y = 0.14;
+            meshes["neon"+i].position.z = 40*i;
+            meshes["neon"+i].material.materials[0] = neonLightsMat;
+            movingGroup2.add(meshes["neon"+i]);
+        }
 
+        neonComp.scene.add(movingGroup2);
+        mainComp.scene.add(movingGroup);
+
+        /*
+            Inicio de Shaders ! :D
+        */
+
+        neonComp.renderPass = new THREE.RenderPass(neonComp.scene,cam);
+        neonComp.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
+        neonComp.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
+        neonComp.blurPass2 = new THREE.ShaderPass(THREE.VerticalBlurShader);
+        neonComp.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight;
+
+        neonComp.copyPass = new THREE.ShaderPass(THREE.CopyShader);
+
+        neonComp.composer = new THREE.EffectComposer(renderer);
+        neonComp.composer.addPass(neonComp.renderPass);
+        neonComp.composer.addPass(neonComp.blurPass2);
+        neonComp.composer.addPass(neonComp.blurPass);
+        neonComp.composer.addPass(neonComp.copyPass);
+        neonComp.composer.setSize(window.innerWidth,window.innerHeight);
+
+
+        mainComp.composer = new THREE.EffectComposer(renderer);
+        mainComp.renderPass = new THREE.RenderPass(mainComp.scene,cam);
+        mainComp.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
+        mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget2.texture;
+        mainComp.blendPass.uniforms["amount"].value = 1.0;
+        mainComp.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+        mainComp.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+
+
+        mainComp.composer.addPass(mainComp.renderPass);
+        mainComp.composer.addPass(mainComp.blendPass);
+        mainComp.composer.addPass(mainComp.fxaaPass);
+        //mainComp.blendPass.renderToScreen = true;
+        mainComp.fxaaPass.renderToScreen = true;
+
+        mainComp.composer.setSize(window.innerWidth,window.innerHeight);
+
+        /*
+            Fin de Shaders *0*
+        */
+
+        //mainComp.scene.fog = new THREE.FogExp2(0x000000, 0.01);
+        window.scene = mainComp.scene;
+
+        dispose3(loadingMap.scene);
 
         TEConfig.mode = TEConfig.modes.game;
-
         $("#loading").hide();
         $("#loading").removeClass();
     }
 
     function mainAnimate(delta) {
 
+        //renderer.render(mainComp.scene,cam);
+
+        renderMain(delta);
+    }
+
+    function renderMain(delta) {
+        neonComp.composer.render(delta);
+        mainComp.composer.render(delta);
     }
 
     return{

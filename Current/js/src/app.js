@@ -20,7 +20,6 @@ var TEConfig = {
 };
 
 var TEMain = function () {
-    var sceneLoading,mainScene,menuScene;
     var camera,renderer,audioListener;
 
     var stats;
@@ -28,9 +27,6 @@ var TEMain = function () {
 
 
     function init() {
-        sceneLoading = new THREE.Scene();
-        mainScene = new THREE.Scene();
-        menuScene = new THREE.Scene();
 
         timer01 = new THREE.Clock();
 
@@ -40,9 +36,7 @@ var TEMain = function () {
         stats.showPanel(0);
         document.body.appendChild( stats.dom );
 
-
-        mainScene.fog = new THREE.FogExp2(0x000000, 0.01);
-        camera = new THREE.PerspectiveCamera( 90, window.innerWidth/window.innerHeight , 0.1, 100 );
+        camera = new THREE.PerspectiveCamera( 103, window.innerWidth/window.innerHeight , 0.1, 100 );
 
         camera.position.set(0, 10, -5);
         camera.lookAt(new THREE.Vector3(0, 10, 0));
@@ -58,9 +52,6 @@ var TEMain = function () {
         renderer.shadowMap.Type = THREE.PCFSoftShadowMap;
 
         $("#game").append(renderer.domElement);
-
-        window.scene = menuScene;
-
 
         TEMenu.init();
         resize();
@@ -99,11 +90,12 @@ var TEMain = function () {
                 break;
             case 2:
                 TEGame.loadinAnimate(delta);
-                renderer.render(sceneLoading,camera);
+                //renderer.render(sceneLoading,camera);
                 console.log("Cargando");
                 break;
             case 3:
-                renderer.render(mainScene,camera);
+                TEGame.mainAnimate(delta);
+                //renderer.render(mainScene,camera);
                 break;
             default:
                 break;
@@ -114,15 +106,6 @@ var TEMain = function () {
 
     return {
         init: init,
-        getMenuScene: function(){
-            return menuScene;
-        },
-        getMainScene: function(){
-            return mainScene;
-        },
-        getLoadingScene: function(){
-            return sceneLoading;
-        },
         getAudioListener: function(){
             return audioListener;
         },
