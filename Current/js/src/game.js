@@ -3,7 +3,7 @@
  */
 
 var TEGame = function () {
-    var listener, renderer;
+    var listener, renderer, analyzer1;
 
     var neonComp = {};
 
@@ -69,7 +69,7 @@ var TEGame = function () {
         listener = TEMain.getAudioListener();
         cam = TEMain.getCamera();
 
-        mainLight = new THREE.PointLight(0xffffff,0.5,50);
+        mainLight = new THREE.PointLight(0xffffff,0.5,0);
 
         cam.far = 365;
         cam.updateProjectionMatrix();
@@ -89,7 +89,7 @@ var TEGame = function () {
         neonLightsMat = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             emissive: 0xffffff,
-            emissiveIntensity: 1
+            emissiveIntensity: 0
         });
         neonLightsMat.name = "NeonMat";
 
@@ -137,6 +137,8 @@ var TEGame = function () {
                                 sound.setVolume(0.5);
 
                                 assets[key].aud = sound;
+
+                                analyzer1 = new THREE.AudioAnalyser(assets[key].aud,32);
                             }
                         );
                         break;
@@ -283,7 +285,7 @@ var TEGame = function () {
         mainComp.renderPass = new THREE.RenderPass(mainComp.scene,cam);
         mainComp.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
         mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget2.texture;
-        mainComp.blendPass.uniforms["amount"].value = 1.0;
+        mainComp.blendPass.uniforms["amount"].value = 2.0;
         mainComp.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         mainComp.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
 
@@ -305,12 +307,25 @@ var TEGame = function () {
 
         dispose3(loadingMap.scene);
 
+        colorCount = 0;
+
         TEConfig.mode = TEConfig.modes.game;
         $("#loading").hide();
         $("#loading").removeClass();
     }
 
     function mainAnimate(delta) {
+
+
+        mainLight.distance = analyzer1.getAverageFrequency();
+
+        neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;
+        neonLightsMat.emissive.g = (Math.cos(0.00353 * colorCount + 2) * 127 + 128) / 255;
+        neonLightsMat.emissive.b = -(Math.sin(0.00353 * colorCount + 4) * 127 + 128) / 255;
+
+        colorCount++;
+
+        neonLightsMat.emissiveIntensity = analyzer1.getAverageFrequency() / 255;
 
         //renderer.render(mainComp.scene,cam);
 
