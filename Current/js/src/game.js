@@ -69,7 +69,7 @@ var TEGame = function () {
         listener = TEMain.getAudioListener();
         cam = TEMain.getCamera();
 
-
+        mainLight = new THREE.PointLight(0xffffff,0.5,50);
 
         cam.far = 365;
         cam.updateProjectionMatrix();
@@ -256,6 +256,8 @@ var TEGame = function () {
 
         neonComp.scene.add(movingGroup2);
         mainComp.scene.add(movingGroup);
+
+        mainComp.scene.add(mainLight);
 
         /*
             Inicio de Shaders ! :D
