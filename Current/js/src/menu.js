@@ -110,20 +110,20 @@ var TEMenu = function () {
         // Escena Blur
         menuBlur.composer = new THREE.EffectComposer(renderer);
 
+
+
         menuBlur.renderPass = new THREE.RenderPass(menuBlur.scene,cam);
         menuBlur.composer.addPass(menuBlur.renderPass);
-
-        menuBlur.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
-        menuBlur.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
-        menuBlur.composer.addPass(menuBlur.blurPass);
-
-        menuBlur.blurPass2 = new THREE.ShaderPass(THREE.VerticalBlurShader);
-        menuBlur.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight;
-        menuBlur.composer.addPass(menuBlur.blurPass2);
 
         menuBlur.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         menuBlur.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
         menuBlur.composer.addPass(menuBlur.fxaaPass);
+
+        menuBlur.blurPass = new THREE.ShaderPass(THREE.MenuShader);
+        menuBlur.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
+        menuBlur.blurPass.uniforms["v"].value = 3.0 / window.innerHeight;
+        menuBlur.composer.addPass(menuBlur.blurPass);
+
 
         menuBlur.copyPass = new THREE.ShaderPass(THREE.CopyShader);
         menuBlur.composer.addPass(menuBlur.copyPass);
@@ -142,10 +142,10 @@ var TEMenu = function () {
 
         finalScene.composer = new THREE.EffectComposer(renderer);
         finalScene.composer.addPass(finalScene.renderPass);
-        finalScene.composer.addPass(finalScene.blendPass);
         finalScene.composer.addPass(finalScene.fxaaPass);
+        finalScene.composer.addPass(finalScene.blendPass);
         //finalScene.blendPass.renderToScreen = true;
-        finalScene.fxaaPass.renderToScreen = true;
+        finalScene.blendPass.renderToScreen = true;
 
         finalScene.composer.setSize(window.innerWidth,window.innerHeight);
 
