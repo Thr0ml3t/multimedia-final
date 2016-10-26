@@ -57,6 +57,21 @@ var TEGame = function () {
         }
     };
 
+    var player = {
+        height: 6.0,
+        minHeight: 1.0,
+        maxHeight: 12.0,
+        speed: 5.0,
+        maxSpeed: 40,
+        acceleration: 0.1,
+        slideSpeed: 0,
+        slideAcceleration: 5.0,
+        maxSideSpeed: 20,
+        pitchSpeed: 0,
+        pitchAcceleration: 3.0,
+        pitchMaxSpeed: 20
+    };
+
     var neonLightsMat;
 
     var meshes = {};
@@ -68,6 +83,8 @@ var TEGame = function () {
         renderer = TEMain.getRenderer();
         listener = TEMain.getAudioListener();
         cam = TEMain.getCamera();
+        cam.position.set(0,player.height,-5);
+        cam.lookAt(new THREE.Vector3(0, player.height, 0));
 
         mainLight = new THREE.PointLight(0xffffff,0.5,0);
 
@@ -216,7 +233,7 @@ var TEGame = function () {
         neonLightsMat.map = assets.neonMapD.texture;
         neonLightsMat.needsUpdate = true;
 
-        for (var i = 0; i < 5; i++){
+        for (var i = 0; i < 15; i++){
             meshes["p1"+i] = assets.px1.mesh.clone();
             meshes["p1"+i].name = "Px1-"+i;
             meshes["p1"+i].scale.set(5,5,5);
@@ -225,16 +242,18 @@ var TEGame = function () {
             movingGroup.add(meshes["p1"+i]);
         }
 
-        for (var i = 0; i < 5; i++){
-             meshes["p2"+i] = assets.px2.mesh.clone();
-             meshes["p2"+i].name = "Px2-"+i;
-             meshes["p2"+i].scale.set(5,5,5);
-             meshes["p2"+i].rotation.set(0,Math.PI/2,0);
-             meshes["p2"+i].position.z = (40 * i) + 20;
-             movingGroup.add(meshes["p2"+i]);
+        for (var i = 0; i < 15; i++){
+            meshes["p2"+i] = assets.px2.mesh.clone();
+            meshes["p2"+i].name = "Px2-"+i;
+            meshes["p2"+i].scale.set(5,5,5);
+            meshes["p2"+i].rotation.set(0,Math.PI/2,0);
+            meshes["p2"+i].position.x = 0.16;
+            meshes["p2"+i].position.y = 0.12;
+            meshes["p2"+i].position.z = (40 * i) + 20;
+            movingGroup.add(meshes["p2"+i]);
          }
 
-        for(var i = 0; i < 6; i++) {
+        for(var i = 0; i < 15; i++) {
             meshes["neon"+i] = assets.neon.mesh.clone();
             meshes["neon"+i].name = "Neon-"+i;
             meshes["neon"+i].scale.set(5,5,5);
@@ -246,7 +265,7 @@ var TEGame = function () {
             movingGroup.add(meshes["neon"+i]);
         }
 
-        for(var i = 0; i < 6; i++) {
+        for(var i = 0; i < 15; i++) {
             meshes["neon"+i] = assets.neon.mesh.clone();
             meshes["neon"+i].name = "Neon-"+i;
             meshes["neon"+i].scale.set(5,5,5);
@@ -306,7 +325,7 @@ var TEGame = function () {
         */
 
         //mainComp.scene.fog = new THREE.FogExp2(0x000000, 0.01);
-        window.scene = mainComp.scene;
+        window.scene = neonComp.scene;
 
         dispose3(loadingMap.scene);
 
@@ -319,9 +338,19 @@ var TEGame = function () {
 
     function mainAnimate(delta) {
 
+        player.speed = analyzer1.getAverageFrequency() / 4 * delta;
 
         if (assets['bgMusic'].aud.isPlaying){
             mainLight.distance = analyzer1.getAverageFrequency();
+
+
+            movingGroup.position.z -= player.speed;
+            movingGroup2.position.z -= player.speed;
+
+            if (movingGroup.position.z <= -400){
+                movingGroup.position.z = 0;
+                movingGroup2.position.z = 0;
+            }
 
             neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;
             neonLightsMat.emissive.g = (Math.sin(0.00353 * colorCount + 2) * 127 + 128) / 255;
