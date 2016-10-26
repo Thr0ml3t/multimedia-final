@@ -58,7 +58,7 @@ var TEGame = function () {
     };
 
     var player = {
-        height: 6.0,
+        height: 5.0,
         minHeight: 1.0,
         maxHeight: 12.0,
         speed: 5.0,
