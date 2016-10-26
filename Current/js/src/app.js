@@ -81,6 +81,7 @@ var TEMain = function () {
         requestAnimationFrame(render);
         stats.begin();
         var delta = timer01.getDelta();
+        var elapsed = timer01.getElapsedTime();
 
         switch (TEConfig.mode){
             case 1:
@@ -94,7 +95,7 @@ var TEMain = function () {
                 console.log("Cargando");
                 break;
             case 3:
-                TEGame.mainAnimate(delta);
+                TEGame.mainAnimate(delta,elapsed);
                 //renderer.render(mainScene,camera);
                 break;
             default:

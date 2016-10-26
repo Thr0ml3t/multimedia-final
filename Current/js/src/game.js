@@ -86,7 +86,7 @@ var TEGame = function () {
         cam.position.set(0,player.height,-5);
         cam.lookAt(new THREE.Vector3(0, player.height, 0));
 
-        mainLight = new THREE.PointLight(0xffffff,0.5,0);
+        mainLight = new THREE.PointLight(0xffffff,0,0);
 
         mainLight.position.y = 10;
 
@@ -336,11 +336,17 @@ var TEGame = function () {
         $("#loading").removeClass();
     }
 
-    function mainAnimate(delta) {
+    function mainAnimate(delta, elapsed) {
 
         player.speed = analyzer1.getAverageFrequency() / 4 * delta;
 
+        console.log(elapsed);
+
         if (assets['bgMusic'].aud.isPlaying){
+
+            if (elapsed >= "5" && elapsed <= "10") {
+                mainLight.intensity += 0.1 * delta;
+            }
             mainLight.distance = analyzer1.getAverageFrequency();
 
 
