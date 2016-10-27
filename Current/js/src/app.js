@@ -23,12 +23,8 @@ var TEMain = function () {
     var camera,renderer,audioListener;
 
     var stats;
-    var timer01;
-
 
     function init() {
-
-        timer01 = new THREE.Clock();
 
         THREE.Cache.enabled = true;
 
@@ -44,7 +40,7 @@ var TEMain = function () {
         audioListener = new THREE.AudioListener;
         camera.add(audioListener);
 
-        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer( {antialias:true, preserveDrawingBuffer: true} );
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor( 0x000000, 1 );
@@ -56,8 +52,6 @@ var TEMain = function () {
         TEMenu.init();
         resize();
         render();
-
-        timer01.start();
     };
 
     $(window).resize(function() {
@@ -80,22 +74,19 @@ var TEMain = function () {
     function render() {
         requestAnimationFrame(render);
         stats.begin();
-        var delta = timer01.getDelta();
-        var elapsed = timer01.getElapsedTime();
 
         switch (TEConfig.mode){
             case 1:
-                TEMenu.animateMenu(delta);
-                TEMenu.renderMenu(delta);
+                TEMenu.animateMenu();
                 //renderer.render(menuScene,camera);
                 break;
             case 2:
-                TEGame.loadinAnimate(delta);
+                TEGame.loadinAnimate();
                 //renderer.render(sceneLoading,camera);
                 console.log("Cargando");
                 break;
             case 3:
-                TEGame.mainAnimate(delta,elapsed);
+                TEGame.mainAnimate();
                 //renderer.render(mainScene,camera);
                 break;
             default:

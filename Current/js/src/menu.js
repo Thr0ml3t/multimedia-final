@@ -11,6 +11,8 @@ var TEMenu = function () {
 
     var sceneD;
 
+    var timer,delta;
+
     var cam;
 
     var renderer;
@@ -51,6 +53,8 @@ var TEMenu = function () {
         dispose3(menuBlur.scene);
         dispose3(finalScene.scene);
 
+        timer.stop();
+
         menuBlur = null;
         finalScene = null;
 
@@ -70,6 +74,8 @@ var TEMenu = function () {
 
         cam.far = 2000;
         cam.updateProjectionMatrix();
+
+        timer = new THREE.Clock();
 
 
         for ( var z= -1000; z < 1000; z+=20 ) {
@@ -96,11 +102,11 @@ var TEMenu = function () {
             sphere.material.emissive.b = (Math.sin(0.3 * z) * 127 + 128) / 255;
 
             menuBlur.scene.add(sphere);
-            var clone = sphere.clone();
-            finalScene.scene.add(clone);
+            //var clone = sphere.clone();
+            //finalScene.scene.add(clone);
 
             movingGroup.push(sphere);
-            movingGroup2.push(clone);
+            //movingGroup2.push(clone);
 
         }
 
@@ -108,32 +114,28 @@ var TEMenu = function () {
 
 
         // Escena Blur
-        menuBlur.composer = new THREE.EffectComposer(renderer);
-
-
 
         menuBlur.renderPass = new THREE.RenderPass(menuBlur.scene,cam);
-        menuBlur.composer.addPass(menuBlur.renderPass);
-
         menuBlur.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         menuBlur.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
-        menuBlur.composer.addPass(menuBlur.fxaaPass);
-
         menuBlur.blurPass = new THREE.ShaderPass(THREE.MenuShader);
         menuBlur.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
         menuBlur.blurPass.uniforms["v"].value = 3.0 / window.innerHeight;
-        menuBlur.composer.addPass(menuBlur.blurPass);
-
-
         menuBlur.copyPass = new THREE.ShaderPass(THREE.CopyShader);
-        menuBlur.composer.addPass(menuBlur.copyPass);
 
+
+        menuBlur.composer = new THREE.EffectComposer(renderer);
+        menuBlur.composer.addPass(menuBlur.renderPass);
+        menuBlur.composer.addPass(menuBlur.fxaaPass);
+        menuBlur.composer.addPass(menuBlur.blurPass);
+        menuBlur.composer.addPass(menuBlur.copyPass);
+        menuBlur.copyPass.renderToScreen = true;
 
 
         menuBlur.composer.setSize(window.innerWidth,window.innerHeight);
 
         // Escena Final
-        finalScene.renderPass = new THREE.RenderPass(finalScene.scene,cam);
+        /*finalScene.renderPass = new THREE.RenderPass(finalScene.scene,cam);
         finalScene.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
         finalScene.blendPass.uniforms["tAdd"].value = menuBlur.composer.renderTarget2.texture;
         finalScene.blendPass.uniforms["amount"].value = 7.0;
@@ -145,42 +147,45 @@ var TEMenu = function () {
         finalScene.composer.addPass(finalScene.fxaaPass);
         finalScene.composer.addPass(finalScene.blendPass);
         //finalScene.blendPass.renderToScreen = true;
-        finalScene.blendPass.renderToScreen = true;
+        finalScene.blendPass.renderToScreen = true;*/
 
-        finalScene.composer.setSize(window.innerWidth,window.innerHeight);
+        //finalScene.composer.setSize(window.innerWidth,window.innerHeight);
 
+        timer.start();
     };
 
-    function animateMenu(delta) {
+    function animateMenu() {
+
+        delta = timer.getDelta();
 
         for(var i=0; i<movingGroup.length; i++) {
             star = movingGroup[i];
-            star2 = movingGroup2[i];
+           //star2 = movingGroup2[i];
 
             posNew = delta * i;
 
             star.position.z +=  posNew;
-            star2.position.z +=  posNew;
+            //star2.position.z +=  posNew;
 
             if(star.position.z>2000){
                 star.position.z-=2000;
-                star2.position.z-=2000;
+                //star2.position.z-=2000;
             }
-
         }
 
+        renderMenu(delta);
     };
 
     function renderMenu(delta) {
         menuBlur.composer.render(delta);
-        finalScene.composer.render(delta);
+        //finalScene.composer.render(delta);
     };
 
 
     function resizeMenu() {
-        if(finalScene != null){
-            finalScene.composer.setSize(window.innerWidth,window.innerHeight);
-            finalScene.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+        if(menuBlur != null){
+            menuBlur.composer.setSize(window.innerWidth,window.innerHeight);
+            menuBlur.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
         }
     };
 
@@ -190,7 +195,6 @@ var TEMenu = function () {
         startGame: startGame,
         init: init,
         animateMenu: animateMenu,
-        renderMenu: renderMenu,
         resizeMenu: resizeMenu
     }
 
