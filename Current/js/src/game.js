@@ -3,7 +3,7 @@
  */
 
 var TEGame = function () {
-    var listener, renderer, analyzer1;
+    var listener, renderer, renderer2, renderer3, analyzer1;
 
     var neonComp = {};
 
@@ -21,7 +21,7 @@ var TEGame = function () {
 
     var loadingLight;
 
-    var cam;
+    var cam,cam2;
     var colorCount = 0;
 
     var timerL, timerM;
@@ -88,6 +88,15 @@ var TEGame = function () {
         cam.position.set(0,player.height,-5);
         cam.lookAt(new THREE.Vector3(0, player.height, 0));
 
+        cam2 = new THREE.PerspectiveCamera( 103, window.innerWidth/window.innerHeight , 0.1, 100 );
+        cam2.position.set(0,player.height,-5);
+        cam2.lookAt(new THREE.Vector3(0, player.height, 0));
+
+        var renderTargetParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBufer: false };
+
+        renderer2 = new THREE.WebGLRenderTarget( window.innerWidth/4, window.innerHeight/4, renderTargetParameters );
+        renderer3 = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, renderTargetParameters );
+
 
         timerL = new THREE.Clock();
         timerM = new THREE.Clock();
@@ -96,7 +105,7 @@ var TEGame = function () {
 
         mainLight.position.set(0, 10, -5);
 
-        cam.far = 365;
+        cam.far = 400;
         cam.updateProjectionMatrix();
 
         movingGroup = new THREE.Object3D();
@@ -291,7 +300,6 @@ var TEGame = function () {
         neonComp.scene.add(movingGroup2);*/
 
         mainComp.scene.add(movingGroup);
-
         mainComp.scene.add(mainLight);
 
         /*
@@ -299,15 +307,17 @@ var TEGame = function () {
         */
 
 
-        /*neonComp.renderPass = new THREE.RenderPass(neonComp.scene,cam);
+        /*neonComp.renderPass = new THREE.RenderPass(neonComp.scene,cam2);
         neonComp.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
-        neonComp.blurPass.uniforms["h"].value = 3.0 / window.innerWidth;
+
+        neonComp.blurPass.uniforms["tDiffuse"].value = renderer.renderTarget2;
+        neonComp.blurPass.uniforms["h"].value = 3.0 / window.innerWidth*2;
         neonComp.blurPass2 = new THREE.ShaderPass(THREE.VerticalBlurShader);
-        neonComp.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight;
+        neonComp.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight*2;
 
         neonComp.copyPass = new THREE.ShaderPass(THREE.CopyShader);
 
-        neonComp.composer = new THREE.EffectComposer(renderer);
+        neonComp.composer = new THREE.EffectComposer(renderer,renderer2);
         neonComp.composer.addPass(neonComp.renderPass);
         neonComp.composer.addPass(neonComp.blurPass);
         neonComp.composer.addPass(neonComp.blurPass2);
@@ -315,10 +325,10 @@ var TEGame = function () {
         neonComp.composer.setSize(window.innerWidth,window.innerHeight);*/
 
 
-        mainComp.composer = new THREE.EffectComposer(renderer);
+        mainComp.composer = new THREE.EffectComposer(renderer,renderer3);
         mainComp.renderPass = new THREE.RenderPass(mainComp.scene,cam);
         /*mainComp.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget2.texture;
+        mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget1.texture;
         mainComp.blendPass.uniforms["amount"].value = 2.0;*/
         mainComp.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         mainComp.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
@@ -327,6 +337,7 @@ var TEGame = function () {
         mainComp.composer.addPass(mainComp.renderPass);
         mainComp.composer.addPass(mainComp.fxaaPass);
         /*mainComp.composer.addPass(mainComp.blendPass);
+        mainComp.blendPass.needsSwap = true;
         mainComp.blendPass.renderToScreen = true;*/
         mainComp.fxaaPass.renderToScreen = true;
 
@@ -368,7 +379,7 @@ var TEGame = function () {
 
 
             movingGroup.position.z -= player.speed * delta;
-            //movingGroup2.position.z -= delta * player.speed;
+            movingGroup2.position.z -= player.speed * delta;
 
             if (movingGroup.position.z <= -400){
                 movingGroup.position.z = 0;

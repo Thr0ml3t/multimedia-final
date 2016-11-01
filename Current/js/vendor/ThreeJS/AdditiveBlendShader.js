@@ -47,8 +47,8 @@ THREE.AdditiveBlendShader = {
 			'vec4 texelBase = texture2D( tDiffuse, vUv );',
 			'vec4 texelAdd = texture2D( tAdd, vUv );',
 
-			'gl_FragColor = (texelBase + vec4(0.5, 0.75, 1.0, 1.0) * texelAdd) * amount;',
-			//'gl_FragColor =  texelAdd + texelBase * amount;',
+			//'gl_FragColor = (texelBase + vec4(0.5, 0.75, 1.0, 1.0) * texelAdd) * amount;',
+			'gl_FragColor =  texelAdd + texelBase * amount;',
 
 		'}'
 

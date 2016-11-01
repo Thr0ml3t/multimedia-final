@@ -40,12 +40,14 @@ var TEMain = function () {
         audioListener = new THREE.AudioListener;
         camera.add(audioListener);
 
-        renderer = new THREE.WebGLRenderer( {antialias:true, preserveDrawingBuffer: true} );
+        renderer = new THREE.WebGLRenderer( { antialias: false } );
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor( 0x000000, 1 );
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.Type = THREE.PCFSoftShadowMap;
+        renderer.autoClear = false;
+        renderer.sortObjects = false;
+        //renderer.shadowMap.enabled = true;
+        //renderer.shadowMap.Type = THREE.PCFSoftShadowMap;
 
         $("#game").append(renderer.domElement);
 
