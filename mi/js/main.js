@@ -18,7 +18,7 @@ var AppMain = function() {
 
         mainScene = new THREE.Scene();
 
-        //mainScene.fog = new THREE.Fog(0xffffff, 0.015, 100);
+        mainScene.fog = new THREE.FogExp2(0xb9ddf6, 0.005);
 
         window.scene = mainScene;
 
@@ -50,7 +50,7 @@ var AppMain = function() {
     }
 
     function animate() {
-
+        AppJuego.animate();
     }
 
     function renderG() {

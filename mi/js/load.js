@@ -23,9 +23,9 @@ var AppLoader = function () {
             mesh: null
         },
         skyDome: {
-            tipo: 'skycube',
-            path: 'assets/skydome/',
-            textureC: null
+            tipo: 'textura',
+            path: 'assets/skydome/3949.jpg',
+            texture: null
         },
         ground: {
             tipo: 'materialPhong',
