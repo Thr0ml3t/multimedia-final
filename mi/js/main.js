@@ -7,6 +7,7 @@ var AppMain = function() {
 	var camera, renderer, mainScene;
 	var stats;
     var isLoading;
+    var keyboard = {};
 
 	function init () {
 		stats = new Stats();
@@ -15,6 +16,8 @@ var AppMain = function() {
 		document.body.appendChild( stats.dom );
 
 		camera = new THREE.PerspectiveCamera( 103, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        camera.position.y = 10.0;
+        camera.lookAt(new THREE.Vector3(0,-10,-15));
 
         mainScene = new THREE.Scene();
 
@@ -63,6 +66,14 @@ var AppMain = function() {
         stats.end();
     }
 
+    function keyDown(keyCode){
+        keyboard[keyCode] = true;
+    }
+
+    function keyUp(keyCode){
+        keyboard[keyCode] = false;
+    }
+
 
     return {
     	init: init,
@@ -81,6 +92,11 @@ var AppMain = function() {
         },
         setIsLoading: function (loading) {
             isLoading = loading;
+        },
+        keyUp: keyUp,
+        keyDown: keyDown,
+        getKey: function () {
+            return keyboard;
         }
     }
 }();
@@ -91,6 +107,14 @@ $(document).ready(function() {
 
 	$(window).resize(function() {
         AppMain.resize();
+    });
+
+    $(window).on("keydown", function (e) {
+        AppMain.keyDown(e.keyCode)
+    });
+
+    $(window).on("keyup", function (e) {
+        AppMain.keyUp(e.keyCode);
     });
 
 });

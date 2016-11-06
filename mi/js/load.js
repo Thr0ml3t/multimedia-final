@@ -36,6 +36,11 @@ var AppLoader = function () {
             tipo: 'modelo',
             path: 'assets/pista/pista.js',
             mesh: null
+        },
+        falcon: {
+            tipo: 'modelo',
+            path: 'assets/naves/falcon.js',
+            mesh: null
         }
     };
 

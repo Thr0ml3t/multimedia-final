@@ -1,8 +1,15 @@
 var AppJuego = function() {
 
-	var assets;
+    var jugador = {
+        vel: 0.0,
+        velMaxima: 100.0,
+        accel: 0.1,
+        slideSpeed: 0.0,
+        slideAccel: 10.0,
+        maxSlideSpeed: 40.0
+    };
 
-    var torretaTest;
+	var assets;
 
     var scn; // Variable para alamcenar la escena
 
@@ -15,7 +22,7 @@ var AppJuego = function() {
 
     var moveGroup;
 
-    var pista,edificiosL,edificiosR;
+    var pista,edificiosL,edificiosR, nave;
 
     var timer01;
 
@@ -140,7 +147,17 @@ var AppJuego = function() {
         sky.material.side = THREE.BackSide;
         sky.name = 'Sky Dome';
 
+        /**
+         * Nave O.o
+         */
+        nave = assets.falcon.mesh.clone();
 
+        nave.position.y = -13;
+        nave.position.z = 15;
+        nave.scale.set(10,10,10);
+
+
+        scn.add(nave);
         /**
          * Agrega todos nuestros elementos a la escena
          */
@@ -153,14 +170,59 @@ var AppJuego = function() {
         timer01.start();
 	}
 
+	function controlNave(delta) {
+        var keyB = AppMain.getKey();
+
+        if (keyB[87]){
+            if(jugador.vel < jugador.velMaxima){
+                jugador.vel += jugador.accel;
+            }
+        }else{
+            if(jugador.vel > 0){
+                jugador.vel -= jugador.accel;
+            }
+        }
+
+        if(keyB[83]){
+            if(jugador.vel > 0){
+                jugador.vel -= jugador.accel * 10.0;
+            }
+        }
+
+        if(jugador.vel > 0){
+            if(keyB[65]){
+                jugador.slideSpeed -= jugador.slideAccel;
+                jugador.slideSpeed = Math.max(jugador.slideSpeed,-jugador.maxSlideSpeed);
+            }else if(keyB[68]){
+                jugador.slideSpeed += jugador.slideAccel;
+                jugador.slideSpeed = Math.min(jugador.slideSpeed,jugador.maxSlideSpeed);
+            }else{
+                jugador.slideSpeed *= 0.8;
+            }
+        }
+
+        var next = moveGroup.position.x + jugador.slideSpeed * delta;
+
+        if(next > 45 || next < -45){
+            jugador.slideSpeed = -jugador.slideSpeed * 1;
+
+        }
+    }
+
     function animate(){
         var delta = timer01.getDelta();
-        var speed = 50 * delta;
+        //var speed = 50 * delta;
 
-        moveGroup.position.z -= speed;
+        /**
+         * Controla la nave :b
+         */
+        controlNave(delta);
 
-        console.log(moveGroup.position.z);
+        nave.rotation.z = jugador.slideSpeed * delta * 0.2;
+        moveGroup.position.x += jugador.slideSpeed * delta;
+        moveGroup.position.z -= jugador.vel * delta;
 
+        //console.log(moveGroup.position.z);
 
         /*if(moveGroup.position.z <= -840){
             moveGroup.position.z = 0;
