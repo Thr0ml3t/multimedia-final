@@ -28,11 +28,19 @@ var AppJuego = function() {
 
     var torrArray = [null,null,null];
 
+    var torrets1 = [];
+
     var torrets = [];
+
+    var proyectiles = [];
+
+    var puedenDisparar = 0;
 
     var naveBB,bbox;
 
     var timer01;
+
+    var proyectil;
 
 	function init() {
 
@@ -72,6 +80,15 @@ var AppJuego = function() {
         torrArray[2] = assets.torreta3.mesh;
 
         /**
+         * Esfera para el proyectil O_o
+         */
+        var proyGeo = new THREE.SphereGeometry(2,4,4);
+        var mat = new THREE.MeshPhongMaterial({
+            color: 0xffe8a1
+        });
+        proyectil = new THREE.Mesh(proyGeo,mat);
+
+        /**
          * Genera las toretas :O
          */
         for(var i = 0; i < 300; i++){
@@ -87,6 +104,8 @@ var AppJuego = function() {
             clone.position.y = -6;
             clone.rotation.y = Math.PI;
 
+            clone.delayDisparo = 0;
+
             var turretBB = new THREE.BoundingBoxHelper(clone,0x00ff00);
             turretBB.update();
             turretBB.box.expandByVector(new THREE.Vector3(0,5,0));
@@ -94,6 +113,7 @@ var AppJuego = function() {
 
             torretas.add(clone);
             torrets.push(turretBB);
+            torrets1.push(clone);
 
         }
 
@@ -272,13 +292,67 @@ var AppJuego = function() {
 
         bbox.update();
 
+
+        for(var i = 0; i < proyectiles.length; i++){
+            if(proyectiles[i] === undefined) continue;
+            if(proyectiles[i].alive == false){
+                proyectiles.splice(i,1);
+                continue;
+            }
+            proyectiles[i].position.add(proyectiles[i].velocity);
+            proyectiles[i].cbb.update();
+
+            var colide = bbox.box.intersectsBox(proyectiles[i].cbb.box);
+            if(colide){
+                jugador.vel = 0;
+            }
+        }
+
         for(var i = 0; i < torrets.length; i++){
             var col = bbox.box.intersectsBox(torrets[i].box);
-            if(col){
-                console.log(col);
-                jugador.vel = 0;
+            var dist = torrets[i].position.distanceTo(nave.position);
+            if(dist < 500 && torrets1[i].delayDisparo <= 0){
+                var clone = proyectil.clone();
+                clone.position.set(
+                    torrets[i].position.x,
+                    torrets[i].position.y - 9,
+                    torrets[i].position.z
+                );
 
+                clone.cbb = new THREE.BoundingBoxHelper(clone,0x0000ff);
+                clone.cbb.update();
+                //scn.add(clone.cbb);
+
+                clone.velocity = new THREE.Vector3(
+                    -Math.sin(torrets1[i].rotation.y),
+                    0,
+                    Math.cos(torrets1[i].rotation.y)
+                );
+
+                clone.alive = true;
+                setTimeout(function () {
+                    clone.alive = false;
+                    scn.remove(clone);
+                    //scn.remove(clone.cbb);
+                },5000);
+
+                proyectiles.push(clone);
+
+                scn.add(clone);
+
+                torrets1[i].delayDisparo = 100;
+
+
+                console.log("Disparo");
             }
+            if(col){
+                //console.log(col);
+                jugador.vel = 0;
+            }
+        }
+
+        for(var i = 0; i < torrets1.length; i++){
+            torrets1[i].delayDisparo -= 1.0;
         }
 
         nave.rotation.z = -jugador.slideSpeed * delta * 0.2;
