@@ -11,6 +11,8 @@ var AppJuego = function() {
         maxSlideSpeed: 40.0
     };
 
+    var isPlaying = true;
+
 	var assets;
 
     var scn, cam; // Variable para alamcenar la escena
@@ -82,7 +84,7 @@ var AppJuego = function() {
         /**
          * Esfera para el proyectil O_o
          */
-        var proyGeo = new THREE.SphereGeometry(2,4,4);
+        var proyGeo = new THREE.SphereGeometry(2,1,1);
         var mat = new THREE.MeshPhongMaterial({
             color: 0xffe8a1
         });
@@ -282,86 +284,102 @@ var AppJuego = function() {
         }
     }
 
+
+    function reset() {
+        nave.rotation.z = 0;
+        nave.rotation.x = 0;
+        nave.position.x = 0;
+        nave.position.z = 0;
+        isPlaying = true;
+    }
+
     function animate(){
-        var delta = timer01.getDelta();
+        if(isPlaying){
+            var delta = timer01.getDelta();
 
-        /**
-         * Controla la nave :b
-         */
-        controlNave(delta);
+            /**
+             * Controla la nave :b
+             */
+            controlNave(delta);
 
-        bbox.update();
+            bbox.update();
 
 
-        for(var i = 0; i < proyectiles.length; i++){
-            if(proyectiles[i] === undefined) continue;
-            if(proyectiles[i].alive == false){
-                proyectiles.splice(i,1);
-                continue;
+            for(var i = 0; i < proyectiles.length; i++){
+                if(proyectiles[i] === undefined) continue;
+                if(proyectiles[i].alive == false){
+                    proyectiles.splice(i,1);
+                    continue;
+                }
+                proyectiles[i].position.add(proyectiles[i].velocity);
+                proyectiles[i].cbb.update();
+
+                var colide = bbox.box.intersectsBox(proyectiles[i].cbb.box);
+                if(colide){
+                    jugador.vel = 0;
+                    isPlaying = false;
+                    setTimeout(reset,1000);
+                }
             }
-            proyectiles[i].position.add(proyectiles[i].velocity);
-            proyectiles[i].cbb.update();
 
-            var colide = bbox.box.intersectsBox(proyectiles[i].cbb.box);
-            if(colide){
-                jugador.vel = 0;
+            for(var i = 0; i < torrets.length; i++){
+                var col = bbox.box.intersectsBox(torrets[i].box);
+                var dist = torrets[i].position.distanceTo(nave.position);
+                if(dist < 500 && torrets1[i].delayDisparo <= 0){
+                    var clone = proyectil.clone();
+                    clone.position.set(
+                        torrets[i].position.x,
+                        torrets[i].position.y - 9,
+                        torrets[i].position.z
+                    );
+
+                    clone.cbb = new THREE.BoundingBoxHelper(clone,0x0000ff);
+                    clone.cbb.update();
+                    //scn.add(clone.cbb);
+
+                    clone.velocity = new THREE.Vector3(
+                        -Math.sin(torrets1[i].rotation.y),
+                        0,
+                        Math.cos(torrets1[i].rotation.y)
+                    );
+
+                    clone.alive = true;
+                    setTimeout(function () {
+                        clone.alive = false;
+                        scn.remove(clone);
+                        //scn.remove(clone.cbb);
+                    },5000);
+
+                    proyectiles.push(clone);
+
+                    scn.add(clone);
+
+                    torrets1[i].delayDisparo = 100;
+
+
+                    console.log("Disparo");
+                }
+                if(col){
+                    //console.log(col);
+                    jugador.vel = 0;
+                    isPlaying = false;
+                    setTimeout(reset,1000);
+
+                }
             }
+
+            for(var i = 0; i < torrets1.length; i++){
+                torrets1[i].delayDisparo -= 1.0;
+            }
+
+            nave.rotation.z = -jugador.slideSpeed * delta * 0.2;
+            nave.rotation.x = jugador.vel * delta * 0.05;
+            nave.position.x += jugador.slideSpeed * delta;
+            nave.position.z += jugador.vel * delta;
+            cam.position.x = nave.position.x;
+            cam.position.z = nave.position.z-25;
+            sky.position.z = nave.position.z;
         }
-
-        for(var i = 0; i < torrets.length; i++){
-            var col = bbox.box.intersectsBox(torrets[i].box);
-            var dist = torrets[i].position.distanceTo(nave.position);
-            if(dist < 500 && torrets1[i].delayDisparo <= 0){
-                var clone = proyectil.clone();
-                clone.position.set(
-                    torrets[i].position.x,
-                    torrets[i].position.y - 9,
-                    torrets[i].position.z
-                );
-
-                clone.cbb = new THREE.BoundingBoxHelper(clone,0x0000ff);
-                clone.cbb.update();
-                //scn.add(clone.cbb);
-
-                clone.velocity = new THREE.Vector3(
-                    -Math.sin(torrets1[i].rotation.y),
-                    0,
-                    Math.cos(torrets1[i].rotation.y)
-                );
-
-                clone.alive = true;
-                setTimeout(function () {
-                    clone.alive = false;
-                    scn.remove(clone);
-                    //scn.remove(clone.cbb);
-                },5000);
-
-                proyectiles.push(clone);
-
-                scn.add(clone);
-
-                torrets1[i].delayDisparo = 100;
-
-
-                console.log("Disparo");
-            }
-            if(col){
-                //console.log(col);
-                jugador.vel = 0;
-            }
-        }
-
-        for(var i = 0; i < torrets1.length; i++){
-            torrets1[i].delayDisparo -= 1.0;
-        }
-
-        nave.rotation.z = -jugador.slideSpeed * delta * 0.2;
-        nave.rotation.x = -jugador.vel * delta * 0.05;
-        nave.position.x += jugador.slideSpeed * delta;
-        nave.position.z += jugador.vel * delta;
-        cam.position.x = nave.position.x;
-        cam.position.z = nave.position.z-25;
-        sky.position.z = nave.position.z;
 
     }
 
