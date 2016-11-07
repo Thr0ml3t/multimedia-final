@@ -57,13 +57,13 @@ var AppMain = function() {
     }
 
     function renderG() {
+        requestAnimationFrame(renderG);
         stats.begin();
         if(!isLoading){
             animate();
             renderer.render(mainScene,camera);
         }
         stats.end();
-        requestAnimationFrame(renderG);
     }
 
     function keyDown(keyCode){
