@@ -22,7 +22,9 @@ var AppJuego = function() {
 
     var moveGroup;
 
-    var pista,edificiosL,edificiosR, nave;
+    var pista,edificiosL,edificiosR,torretas,nave;
+
+    var torrArray = [null,null,null];
 
     var timer01;
 
@@ -52,8 +54,36 @@ var AppJuego = function() {
         edificiosR = new THREE.Object3D();
         edificiosR.name = 'Edificios Derecha';
 
+        torretas = new THREE.Object3D();
+        torretas.name = 'Torretas';
+
         moveGroup.position.y = -10;
 
+
+        torrArray[0] = assets.torreta1.mesh;
+        torrArray[1] = assets.torreta2.mesh;
+        torrArray[2] = assets.torreta3.mesh;
+
+        /**
+         * Genera las toretas :O
+         */
+        for(var i = 0; i < 500; i++){
+            var posRandX = Math.random();
+            var posRandY = Math.random();
+            var turretSelect = Math.floor((Math.random() * 3) + 0);
+
+            var clone = torrArray[turretSelect].clone();
+
+            clone.scale.set(2,2,2);
+            clone.position.x = posRandX * 90 - 90/2;
+            clone.position.z = - (posRandY * 150000) + 150000/2;
+            clone.position.y = -6;
+            clone.rotation.y = Math.PI;
+
+            torretas.add(clone);
+        }
+
+        moveGroup.add(torretas);
 
         /**
          * Carga la Pista :D
@@ -152,6 +182,8 @@ var AppJuego = function() {
          */
         nave = assets.falcon.mesh.clone();
 
+        nave.name = 'Nave';
+
         nave.position.y = -13;
         nave.position.z = 15;
         nave.scale.set(10,10,10);
@@ -211,7 +243,6 @@ var AppJuego = function() {
 
     function animate(){
         var delta = timer01.getDelta();
-        //var speed = 50 * delta;
 
         /**
          * Controla la nave :b
@@ -219,14 +250,10 @@ var AppJuego = function() {
         controlNave(delta);
 
         nave.rotation.z = jugador.slideSpeed * delta * 0.2;
+        nave.rotation.x = -jugador.vel * delta * 0.05;
         moveGroup.position.x += jugador.slideSpeed * delta;
         moveGroup.position.z -= jugador.vel * delta;
 
-        //console.log(moveGroup.position.z);
-
-        /*if(moveGroup.position.z <= -840){
-            moveGroup.position.z = 0;
-        }*/
     }
 
 
