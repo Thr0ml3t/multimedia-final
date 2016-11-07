@@ -1,8 +1,10 @@
+// Tamaño de la pista 16,000
+
 var AppJuego = function() {
 
     var jugador = {
         vel: 0.0,
-        velMaxima: 100.0,
+        velMaxima: 150.0,
         accel: 0.1,
         slideSpeed: 0.0,
         slideAccel: 10.0,
@@ -11,7 +13,7 @@ var AppJuego = function() {
 
 	var assets;
 
-    var scn; // Variable para alamcenar la escena
+    var scn, cam; // Variable para alamcenar la escena
 
     var lights = {
         luzAmbiental: null,
@@ -22,9 +24,13 @@ var AppJuego = function() {
 
     var moveGroup;
 
-    var pista,edificiosL,edificiosR,torretas,nave;
+    var pista,edificiosL,edificiosR,torretas,nave,sky;
 
     var torrArray = [null,null,null];
+
+    var torrets = [];
+
+    var naveBB,bbox;
 
     var timer01;
 
@@ -34,6 +40,7 @@ var AppJuego = function() {
 
         scn = AppMain.getScene();
 		assets = AppLoader.getAssets();
+        cam = AppMain.getCamera();
 
         lights.luzAmbiental = new THREE.AmbientLight(0xffffff, 0.5);
         lights.luzAmbiental.name = 'Ambient Light';
@@ -67,7 +74,7 @@ var AppJuego = function() {
         /**
          * Genera las toretas :O
          */
-        for(var i = 0; i < 500; i++){
+        for(var i = 0; i < 300; i++){
             var posRandX = Math.random();
             var posRandY = Math.random();
             var turretSelect = Math.floor((Math.random() * 3) + 0);
@@ -76,11 +83,18 @@ var AppJuego = function() {
 
             clone.scale.set(2,2,2);
             clone.position.x = posRandX * 90 - 90/2;
-            clone.position.z = - (posRandY * 150000) + 150000/2;
+            clone.position.z = - (posRandY * 50000) + 50000/2;
             clone.position.y = -6;
             clone.rotation.y = Math.PI;
 
+            var turretBB = new THREE.BoundingBoxHelper(clone,0x00ff00);
+            turretBB.update();
+            turretBB.box.expandByVector(new THREE.Vector3(0,5,0));
+            //scn.add(turretBB);
+
             torretas.add(clone);
+            torrets.push(turretBB);
+
         }
 
         moveGroup.add(torretas);
@@ -106,7 +120,7 @@ var AppJuego = function() {
          * Genera los edificios de los lados
          */
 
-        for (var i = 0; i < 200; i++){
+        for (var i = 0; i < 300; i++){
             var clone = assets.edificio.mesh.clone();
 
             var randScale = Math.random() * (10 - 8) + 8;
@@ -124,7 +138,7 @@ var AppJuego = function() {
             edificiosL.add(clone);
         }
 
-        for (var i = 0; i < 200; i++){
+        for (var i = 0; i < 300; i++){
             var clone = assets.edificio.mesh.clone();
 
             var randScale = Math.random() * (10 - 8) + 8;
@@ -150,7 +164,7 @@ var AppJuego = function() {
          * Genera un suelo :b
          */
         floor = new THREE.Mesh(
-            new THREE.PlaneGeometry(50000,50000,32,32),
+            new THREE.PlaneGeometry(70000,70000,32,32),
             assets.ground.material
         );
 
@@ -173,7 +187,7 @@ var AppJuego = function() {
             map: assets.skyDome.texture
         });
 
-        var sky = new THREE.Mesh(skyGeo,skyMat);
+        sky = new THREE.Mesh(skyGeo,skyMat);
         sky.material.side = THREE.BackSide;
         sky.name = 'Sky Dome';
 
@@ -185,8 +199,15 @@ var AppJuego = function() {
         nave.name = 'Nave';
 
         nave.position.y = -13;
-        nave.position.z = 15;
         nave.scale.set(10,10,10);
+
+        bbox = new THREE.BoundingBoxHelper(nave,0xff0000);
+
+        console.log(bbox);
+
+        //scn.add(bbox);
+
+        naveBB = new THREE.Box3().setFromObject(nave);
 
 
         scn.add(nave);
@@ -223,17 +244,17 @@ var AppJuego = function() {
 
         if(jugador.vel > 0){
             if(keyB[65]){
-                jugador.slideSpeed -= jugador.slideAccel;
-                jugador.slideSpeed = Math.max(jugador.slideSpeed,-jugador.maxSlideSpeed);
-            }else if(keyB[68]){
                 jugador.slideSpeed += jugador.slideAccel;
                 jugador.slideSpeed = Math.min(jugador.slideSpeed,jugador.maxSlideSpeed);
+            }else if(keyB[68]){
+                jugador.slideSpeed -= jugador.slideAccel;
+                jugador.slideSpeed = Math.max(jugador.slideSpeed,-jugador.maxSlideSpeed);
             }else{
                 jugador.slideSpeed *= 0.8;
             }
         }
 
-        var next = moveGroup.position.x + jugador.slideSpeed * delta;
+        var next = nave.position.x + jugador.slideSpeed * delta;
 
         if(next > 45 || next < -45){
             jugador.slideSpeed = -jugador.slideSpeed * 1;
@@ -249,10 +270,24 @@ var AppJuego = function() {
          */
         controlNave(delta);
 
-        nave.rotation.z = jugador.slideSpeed * delta * 0.2;
+        bbox.update();
+
+        for(var i = 0; i < torrets.length; i++){
+            var col = bbox.box.intersectsBox(torrets[i].box);
+            if(col){
+                console.log(col);
+                jugador.vel = 0;
+
+            }
+        }
+
+        nave.rotation.z = -jugador.slideSpeed * delta * 0.2;
         nave.rotation.x = -jugador.vel * delta * 0.05;
-        moveGroup.position.x += jugador.slideSpeed * delta;
-        moveGroup.position.z -= jugador.vel * delta;
+        nave.position.x += jugador.slideSpeed * delta;
+        nave.position.z += jugador.vel * delta;
+        cam.position.x = nave.position.x;
+        cam.position.z = nave.position.z-25;
+        sky.position.z = nave.position.z;
 
     }
 
