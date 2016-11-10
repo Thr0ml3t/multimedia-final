@@ -13,7 +13,9 @@ var TEGame = function () {
 
     var jsonLoader, audioLoader, textureLoader, loaderManager;
 
-    var cubeLoading, cubeScaling = 0;
+    var cubeLoading;
+
+    var dirLight;
 
     var movingGroup,movingGroup2;
 
@@ -56,6 +58,16 @@ var TEGame = function () {
             type: 'texture',
             file: "assets/pasillos/map_diff.jpg",
             texture: null
+        },
+        puerta1: {
+            type: 'model',
+            file: "assets/puertas/pIzq.js",
+            mesh: null
+        },
+        puerta2: {
+            type: 'model',
+            file: "assets/puertas/pDer.js",
+            mesh: null
         }
     };
 
@@ -104,6 +116,9 @@ var TEGame = function () {
         mainLight = new THREE.PointLight(0xffffff,0,0);
 
         mainLight.position.set(0, 10, -5);
+
+        dirLight = new THREE.DirectionalLight(0xffffff,0.0);
+        dirLight.position.set(0,500,500);
 
         cam.far = 400;
         cam.updateProjectionMatrix();
@@ -193,19 +208,40 @@ var TEGame = function () {
 
     function loadingCreate() {
         cubeLoading = new THREE.Mesh(
-            new THREE.BoxGeometry(1,1,1),
-            new THREE.MeshPhongMaterial({color: 0xff4444, wireframe: false})
+            new THREE.BoxGeometry(10,10,10),
+            new THREE.MeshPhongMaterial({color: 0xff4444})
         );
+
+        console.log(cubeLoading.material.opacity);
 
         loadingLight= new THREE.AmbientLight(0xffffff, 0.2);
         loadingMap.scene.add(loadingLight);
 
-        loadingLight = new THREE.PointLight(0xffffff, 0.8, 18);
-        loadingLight.position.set(-3,6,-3);
+        loadingLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        loadingLight.position.set(0,1,-30);
+        loadingLight.lookAt(new THREE.Vector3(0,5,10));
         loadingMap.scene.add(loadingLight);
 
-        cubeLoading.position.z = 5;
-        cubeLoading.position.y = 10;
+        cubeLoading.position.z = 15;
+
+        cubeLoading.tl = new TimelineMax({repeat:-1, repeatDelay: 1});
+        //I add a few animations in my timeline
+        //The cube turn on itself
+        cubeLoading.tl.to(cubeLoading.rotation, 3, {y:-Math.PI*1.25, x : -Math.PI*1.25, z:-Math.PI*1.25, ease:Back.easeInOut});
+
+        //Then it will move to the left and fade out
+        cubeLoading.tl.to(cubeLoading.position, 1, {x : 150, ease:Power3.easeOut});
+        cubeLoading.tl.to(cubeLoading.material, 1, {opacity : 0, ease:Power3.easeOut}, "-=1");
+
+        //Move the cube without transition
+        cubeLoading.tl.set(cubeLoading.position,{x:100, y: -100});
+
+        //Fade In the cube
+        cubeLoading.tl.to(cubeLoading.material, 1, {opacity : 1, ease:Power3.easeOut});
+
+        //It goes back to its initial position
+        cubeLoading.tl.to(cubeLoading.position, 3, {x:0,y:0, ease: Back.easeInOut.config(2)});
+        cubeLoading.tl.to(cubeLoading.rotation, 3, {x:0,y:0,z:0, ease: Back.easeInOut.config(2)},"-=3");
 
         loadingMap.scene.add(cubeLoading);
 
@@ -226,20 +262,6 @@ var TEGame = function () {
 
     function loadinAnimate() {
         var delta = timerL.getDelta();
-        cubeLoading.rotation.x += delta * 0.5;
-        cubeLoading.rotation.y += delta * 0.5;
-        cubeLoading.rotation.z += delta * 0.5;
-
-        cubeScaling = Math.sin(cubeLoading.rotation.x)*5;
-
-        cubeLoading.material.color.r = (Math.sin(0.001 * colorCount) * 127 + 128) / 255;
-        cubeLoading.material.color.g = (Math.sin(0.002 * colorCount) * 127 + 128) / 255;
-        cubeLoading.material.color.b = (Math.sin(0.003 * colorCount) * 127 + 128) / 255;
-
-        colorCount++;
-
-        cubeLoading.scale.set(cubeScaling,cubeScaling,cubeScaling)
-
 
         loadingMap.composer.render(delta);
 
@@ -254,12 +276,41 @@ var TEGame = function () {
         neonLightsMat.map = assets.neonMapD.texture;
         neonLightsMat.needsUpdate = true;
 
+        var materialSuelo = new THREE.MeshPhongMaterial({
+            color: 0x4B5F64,
+            specular: 0x666666,
+            shininess: 100,
+            reflectivity: 5
+        });
+
+        var materialParedes = new THREE.MeshLambertMaterial({
+            color: 0xB0C4DE
+        });
+
+        var materialMarcos = new THREE.MeshPhongMaterial({
+            color: 0xeff3f8,
+            specular: 0x666666,
+            shininess: 15,
+            reflectivity: 5
+        });
+
+        var materialPuertas = new THREE.MeshPhongMaterial({
+            color: 0x000000,
+            specular: 0x666666,
+            shininess: 20,
+            reflectivity: 5
+        });
+
+        //console.log(assets.px1);
+
         for (var i = 0; i < 15; i++){
             meshes["p1"+i] = assets.px1.mesh.clone();
             meshes["p1"+i].name = "Px1-"+i;
             meshes["p1"+i].scale.set(5,5,5);
             meshes["p1"+i].rotation.set(0,Math.PI/2,0);
             meshes["p1"+i].position.z = 40*i;
+            meshes["p1"+i].material.materials[0] = materialSuelo;
+            meshes["p1"+i].material.materials[1] = materialParedes;
             movingGroup.add(meshes["p1"+i]);
         }
 
@@ -271,6 +322,9 @@ var TEGame = function () {
             meshes["p2"+i].position.x = 0.16;
             meshes["p2"+i].position.y = 0.12;
             meshes["p2"+i].position.z = (40 * i) + 20;
+            meshes["p2"+i].material.materials[2] = materialSuelo;
+            meshes["p2"+i].material.materials[0] = materialParedes;
+            meshes["p2"+i].material.materials[1] = materialMarcos;
             movingGroup.add(meshes["p2"+i]);
          }
 
@@ -284,6 +338,21 @@ var TEGame = function () {
             meshes["neon"+i].position.z = 40*i;
             meshes["neon"+i].material.materials[0] = neonLightsMat;
             movingGroup.add(meshes["neon"+i]);
+        }
+
+        for (var i = 0; i < 15; i++){
+            meshes["puertaIzq"+i] = assets.puerta1.mesh.clone();
+            meshes["puertaIzq"+i].name = "PuertaIzq-"+i;
+            meshes["puertaIzq"+i].scale.set(5,5,5);
+            meshes["puertaIzq"+i].rotation.set(0,Math.PI/2,0);
+            meshes["puertaIzq"+i].position.z = 80*i + 9.7;
+            meshes["puertaIzq"+i].material.materials[1] = neonLightsMat;
+            meshes["puertaIzq"+i].material.materials[0] = materialPuertas;
+            meshes["puertaIzq"+i].tl = new TimelineMax({repeat: -1});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 10) + 5  , {x: 10, ease:Back.easeOut});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 10) + 5  , {x: 0, ease:Back.easeIn});
+
+            movingGroup.add(meshes["puertaIzq"+i]);
         }
 
         /*for(var i = 0; i < 15; i++) {
@@ -301,6 +370,7 @@ var TEGame = function () {
 
         mainComp.scene.add(movingGroup);
         mainComp.scene.add(mainLight);
+        //mainComp.scene.add(dirLight);
 
         /*
             Inicio de Shaders ! :D
@@ -371,10 +441,12 @@ var TEGame = function () {
 
             if (elapsed >= "5" && elapsed <= "10") {
                 mainLight.intensity += 0.1 * delta;
+                dirLight.intensity += 0.01 * delta;
             }
             if(elapsed >= "10"){
                 player.speed = analyzer1.getAverageFrequency() / 4;
             }
+
             mainLight.distance = analyzer1.getAverageFrequency();
 
 

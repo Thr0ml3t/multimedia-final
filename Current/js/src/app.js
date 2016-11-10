@@ -44,8 +44,6 @@ var TEMain = function () {
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor( 0x000000, 1 );
-        renderer.autoClear = false;
-        renderer.sortObjects = false;
         //renderer.shadowMap.enabled = true;
         //renderer.shadowMap.Type = THREE.PCFSoftShadowMap;
 

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Iceland|Noto+Sans" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animate.css">
+
 </head>
 
 <body>
@@ -32,31 +33,12 @@
     </div>
 </div>
 
-
-<script id="vertexShader" type="x-shader/x-vertex">
-varying vec3 vNormal;
-void main()
-{
-    vNormal = normalize( normalMatrix * normal );
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-}
-</script>
-
-<!-- fragment shader a.k.a. pixel shader -->
-<script id="fragmentShader" type="x-shader/x-vertex">
-varying vec3 vNormal;
-void main()
-{
-	float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 4.0 );
-    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
-}
-</script>
-
 <!-- Vendor Scripts -->
 <script src="js/vendor/jQuery/jquery-3.1.1.min.js"></script>
 <script src="js/vendor/ThreeJS/three.min.js"></script>
 <script src="js/vendor/ThreeJS/stats.min.js"></script>
 <script src="js/vendor/HowlerJS/howler.min.js"></script>
+<script src="js/vendor/GSAP/TweenMax.min.js"></script>
 
 <!--Shaders-->
 <script src="js/vendor/ThreeJS/MenuShader.js"></script>
