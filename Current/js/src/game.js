@@ -349,10 +349,25 @@ var TEGame = function () {
             meshes["puertaIzq"+i].material.materials[1] = neonLightsMat;
             meshes["puertaIzq"+i].material.materials[0] = materialPuertas;
             meshes["puertaIzq"+i].tl = new TimelineMax({repeat: -1});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 10) + 5  , {x: 10, ease:Back.easeOut});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 10) + 5  , {x: 0, ease:Back.easeIn});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 6) + 3  , {x: 10});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 6) + 3  , {x: 0});
 
             movingGroup.add(meshes["puertaIzq"+i]);
+        }
+
+        for (var i = 0; i < 15; i++){
+            meshes["puertaDer"+i] = assets.puerta2.mesh.clone();
+            meshes["puertaDer"+i].name = "PuertaDer-"+i;
+            meshes["puertaDer"+i].scale.set(5,5,5);
+            meshes["puertaDer"+i].rotation.set(0,Math.PI/2,0);
+            meshes["puertaDer"+i].position.z = 80*i + 9.7;
+            meshes["puertaDer"+i].material.materials[1] = neonLightsMat;
+            meshes["puertaDer"+i].material.materials[0] = materialPuertas;
+            meshes["puertaDer"+i].tl = new TimelineMax({repeat: -1});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.floor(Math.random() * 6) + 2  , {x: -10});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.floor(Math.random() * 6) + 2  , {x: 0});
+
+            movingGroup.add(meshes["puertaDer"+i]);
         }
 
         /*for(var i = 0; i < 15; i++) {
