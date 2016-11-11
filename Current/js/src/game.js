@@ -333,7 +333,7 @@ var TEGame = function () {
             meshes["p2"+i].material.materials[0] = materialParedes;
             meshes["p2"+i].material.materials[1] = materialMarcos;
             movingGroup.add(meshes["p2"+i]);
-         }
+        }
 
         for(var i = 0; i < 15; i++) {
             meshes["neon"+i] = assets.neon.mesh.clone();
@@ -389,50 +389,50 @@ var TEGame = function () {
         }
 
         /*for(var i = 0; i < 15; i++) {
-            meshes["neon"+i] = assets.neon.mesh.clone();
-            meshes["neon"+i].name = "Neon-"+i;
-            meshes["neon"+i].scale.set(5,5,5);
-            meshes["neon"+i].rotation.set(0,Math.PI/2,0);
-            meshes["neon"+i].position.x = 0.08;
-            meshes["neon"+i].position.y = 0.14;
-            meshes["neon"+i].position.z = 40*i;
-            meshes["neon"+i].material.materials[0] = neonLightsMat;
-            movingGroup2.add(meshes["neon"+i]);
-        }
-        neonComp.scene.add(movingGroup2);*/
+         meshes["neon"+i] = assets.neon.mesh.clone();
+         meshes["neon"+i].name = "Neon-"+i;
+         meshes["neon"+i].scale.set(5,5,5);
+         meshes["neon"+i].rotation.set(0,Math.PI/2,0);
+         meshes["neon"+i].position.x = 0.08;
+         meshes["neon"+i].position.y = 0.14;
+         meshes["neon"+i].position.z = 40*i;
+         meshes["neon"+i].material.materials[0] = neonLightsMat;
+         movingGroup2.add(meshes["neon"+i]);
+         }
+         neonComp.scene.add(movingGroup2);*/
 
         mainComp.scene.add(movingGroup);
         mainComp.scene.add(mainLight);
         //mainComp.scene.add(dirLight);
 
         /*
-            Inicio de Shaders ! :D
-        */
+         Inicio de Shaders ! :D
+         */
 
 
         /*neonComp.renderPass = new THREE.RenderPass(neonComp.scene,cam2);
-        neonComp.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
+         neonComp.blurPass = new THREE.ShaderPass(THREE.HorizontalBlurShader);
 
-        neonComp.blurPass.uniforms["tDiffuse"].value = renderer.renderTarget2;
-        neonComp.blurPass.uniforms["h"].value = 3.0 / window.innerWidth*2;
-        neonComp.blurPass2 = new THREE.ShaderPass(THREE.VerticalBlurShader);
-        neonComp.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight*2;
+         neonComp.blurPass.uniforms["tDiffuse"].value = renderer.renderTarget2;
+         neonComp.blurPass.uniforms["h"].value = 3.0 / window.innerWidth*2;
+         neonComp.blurPass2 = new THREE.ShaderPass(THREE.VerticalBlurShader);
+         neonComp.blurPass2.uniforms["v"].value = 3.0 / window.innerHeight*2;
 
-        neonComp.copyPass = new THREE.ShaderPass(THREE.CopyShader);
+         neonComp.copyPass = new THREE.ShaderPass(THREE.CopyShader);
 
-        neonComp.composer = new THREE.EffectComposer(renderer,renderer2);
-        neonComp.composer.addPass(neonComp.renderPass);
-        neonComp.composer.addPass(neonComp.blurPass);
-        neonComp.composer.addPass(neonComp.blurPass2);
-        neonComp.composer.addPass(neonComp.copyPass);
-        neonComp.composer.setSize(window.innerWidth,window.innerHeight);*/
+         neonComp.composer = new THREE.EffectComposer(renderer,renderer2);
+         neonComp.composer.addPass(neonComp.renderPass);
+         neonComp.composer.addPass(neonComp.blurPass);
+         neonComp.composer.addPass(neonComp.blurPass2);
+         neonComp.composer.addPass(neonComp.copyPass);
+         neonComp.composer.setSize(window.innerWidth,window.innerHeight);*/
 
 
         mainComp.composer = new THREE.EffectComposer(renderer,renderer3);
         mainComp.renderPass = new THREE.RenderPass(mainComp.scene,cam);
         /*mainComp.blendPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget1.texture;
-        mainComp.blendPass.uniforms["amount"].value = 2.0;*/
+         mainComp.blendPass.uniforms["tAdd"].value = neonComp.composer.renderTarget1.texture;
+         mainComp.blendPass.uniforms["amount"].value = 2.0;*/
         mainComp.fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
         mainComp.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
 
@@ -440,15 +440,15 @@ var TEGame = function () {
         mainComp.composer.addPass(mainComp.renderPass);
         mainComp.composer.addPass(mainComp.fxaaPass);
         /*mainComp.composer.addPass(mainComp.blendPass);
-        mainComp.blendPass.needsSwap = true;
-        mainComp.blendPass.renderToScreen = true;*/
+         mainComp.blendPass.needsSwap = true;
+         mainComp.blendPass.renderToScreen = true;*/
         mainComp.fxaaPass.renderToScreen = true;
 
         mainComp.composer.setSize(window.innerWidth,window.innerHeight);
 
         /*
-            Fin de Shaders *0*
-        */
+         Fin de Shaders *0*
+         */
 
         //mainComp.scene.fog = new THREE.FogExp2(0x000000, 0.01);
         window.scene = mainComp.scene;
@@ -502,86 +502,79 @@ var TEGame = function () {
 
     }
 
+    function resize() {
+        mainComp.fxaaPass.uniforms["resolution"].value = new THREE.Vector2(1 / window.innerWidth, 1 / window.innerHeight);
+    }
+
     function mainAnimate() {
 
         var delta = timerM.getDelta();
         var elapsed = timerM.getElapsedTime();
         //console.log(elapsed);
 
-        if (assets['bgMusic'].aud.isPlaying){
-            if(player.canMove)
-            {
-                control(delta);
-            }
-
-            if (elapsed >= "5" && elapsed <= "10") {
-                mainLight.intensity += 0.1 * delta;
-                dirLight.intensity += 0.01 * delta;
-            }
-
-            mainLight.distance = analyzer1.getAverageFrequency();
-
-            score += player.speed * delta;
-
-            if(score > 1000){
-                var score2 = score /1000;
-                $("#highscore").empty();
-                $("#highscore").append(score2.toFixed(2) +" KM");
-            }else{
-                $("#highscore").empty();
-                $("#highscore").append(score.toFixed(2)+" M");
-            }
-
-            movingGroup.position.z -= player.speed * delta;
-            //movingGroup2.position.z -= player.speed * delta;
-
-            if (movingGroup.position.z <= -400){
-                movingGroup.position.z = 0;
-                //movingGroup2.position.z = 0;
-            }
-
-            for (var i = 0; i < puertas.length; i++){
-                puertas[i].bbox.update();
-                var colide = puertas[i].bbox.box.distanceToPoint(cam.position);
-                if(colide < 1 && player.canMove){
-                    player.canMove = false;
-                    player.speed = 0;
-                    player.slideSpeed = 0;
-                    setTimeout(function () {
-                        player.canMove = true;
-                        score = 0;
-                        cam.position.x = 0;
-                        movingGroup.position.z = 0;
-                    },3000);
-                    //console.log("Hit !");
-                }
-            }
-
-            neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;
-            neonLightsMat.emissive.g = (Math.cos(0.00353 * colorCount + 2) * 127 + 128) / 255;
-            neonLightsMat.emissive.b = (Math.sin(0.00353 * colorCount + 4) * 127 + 128) / 255;
-
-            colorCount++;
-
-            neonLightsMat.emissiveIntensity = analyzer1.getAverageFrequency() / 100;
-
-            cam.position.x += player.slideSpeed * delta;
-            mainLight.position.x = cam.position.x;
-            movingGroup.rotation.z = THREE.Math.degToRad(player.slideSpeed * delta * 2);
-
-
-        }else {
-
-            mainLight.distance = 1;
-
-            colorCount = 0;
-
-            neonLightsMat.emissiveIntensity = 0;
-
-            TEConfig.mode = 1;
-
-            dispose3(mainComp.scene);
+        if(player.canMove)
+        {
+            control(delta);
         }
+
+        if (elapsed >= "5" && elapsed <= "10") {
+            mainLight.intensity += 0.1 * delta;
+            dirLight.intensity += 0.01 * delta;
+        }
+
+        mainLight.distance = analyzer1.getAverageFrequency();
+
+        score += player.speed * delta;
+
+        if(score > 1000){
+            var score2 = score /1000;
+            $("#highscore").empty();
+            $("#highscore").append(score2.toFixed(2) +" KM");
+        }else{
+            $("#highscore").empty();
+            $("#highscore").append(score.toFixed(2)+" M");
+        }
+
+        movingGroup.position.z -= player.speed * delta;
+        //movingGroup2.position.z -= player.speed * delta;
+
+        if (movingGroup.position.z <= -400){
+            movingGroup.position.z = 0;
+            //movingGroup2.position.z = 0;
+        }
+
+        for (var i = 0; i < puertas.length; i++){
+            puertas[i].bbox.update();
+            var colide = puertas[i].bbox.box.distanceToPoint(cam.position);
+            if(colide < 1 && player.canMove){
+                player.canMove = false;
+                player.speed = 0;
+                player.slideSpeed = 0;
+                //assets['bgMusic'].aud.setPlaybackRate(0.5);
+                setTimeout(function () {
+                    player.canMove = true;
+                    score = 0;
+                    cam.position.x = 0;
+                    movingGroup.position.z = 0;
+                    assets['bgMusic'].aud.stop();
+                    //assets['bgMusic'].aud.setPlaybackRate(1.0);
+                    assets['bgMusic'].aud.play();
+                },3000);
+                //console.log("Hit !");
+            }
+        }
+
+        neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;
+        neonLightsMat.emissive.g = (Math.cos(0.00353 * colorCount + 2) * 127 + 128) / 255;
+        neonLightsMat.emissive.b = (Math.sin(0.00353 * colorCount + 4) * 127 + 128) / 255;
+
+        colorCount++;
+
+        neonLightsMat.emissiveIntensity = analyzer1.getAverageFrequency() / 100;
+
+        cam.position.x += player.slideSpeed * delta;
+        mainLight.position.x = cam.position.x;
+        movingGroup.rotation.z = THREE.Math.degToRad(player.slideSpeed * delta * 2);
 
         renderMain(delta);
     }
@@ -597,6 +590,7 @@ var TEGame = function () {
         getAudio: function () {
             return assets['bgMusic'].aud;
         },
-        mainAnimate: mainAnimate
+        mainAnimate: mainAnimate,
+        resize: resize
     }
 }();

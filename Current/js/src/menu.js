@@ -32,7 +32,7 @@ var TEMenu = function () {
 
 
         // Nueva Time Line :D!!!
-        timeLine = new TimelineMax({delay: 1});
+        timeLine = new TimelineMax({delay: 0.5});
 
         timeLine.to($("#gameName1"),2,{transform: "translate(0,0)", ease: Bounce.easeOut});
         timeLine.to($("#gameName1"),2,{opacity: 1, ease: Power2.easeInOut},"-=2");

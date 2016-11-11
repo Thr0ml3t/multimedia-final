@@ -66,6 +66,10 @@ var TEMain = function () {
 
         TEMenu.resizeMenu();
 
+        if(TEConfig.mode == 3){
+            TEGame.resize();
+        }
+
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
     }
