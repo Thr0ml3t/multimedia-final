@@ -26,7 +26,7 @@ var TEGame = function () {
     var cam,cam2;
     var colorCount = 0;
 
-    var timerL, timerM;
+        var timerL,timerM;
 
     var assets = {
         px1: {
@@ -467,7 +467,7 @@ var TEGame = function () {
 
         colorCount = 0;
 
-        timerM.start();
+
 
         setTimeout(function () {
             if(TEConfig.bgMusic == 1){
@@ -482,6 +482,8 @@ var TEGame = function () {
                 assets["bgMusic3"].aud.play();
                 analyzer1 = new THREE.AudioAnalyser(assets["bgMusic3"].aud,32);
             }
+
+            timerM.start();
 
             TEConfig.mode = TEConfig.modes.game;
             $("#loading").hide();
@@ -545,8 +547,9 @@ var TEGame = function () {
 
         if (elapsed >= "5" && elapsed <= "10") {
             mainLight.intensity += 0.1 * delta;
-            dirLight.intensity += 0.01 * delta;
+            console.log(mainLight.intensity);
         }
+
 
         mainLight.distance = analyzer1.getAverageFrequency();
 
