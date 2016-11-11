@@ -25,7 +25,7 @@ var TEMain = function () {
 
         stats = new Stats();
         stats.showPanel(0);
-        document.body.appendChild( stats.dom );
+        //document.body.appendChild( stats.dom );
 
         camera = new THREE.PerspectiveCamera( 103, window.innerWidth/window.innerHeight , 0.1, 100 );
 

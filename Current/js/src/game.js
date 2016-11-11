@@ -83,12 +83,15 @@ var TEGame = function () {
         maxSideSpeed: 20,
         pitchSpeed: 0,
         pitchAcceleration: 3.0,
-        pitchMaxSpeed: 20
+        pitchMaxSpeed: 20,
+        canMove: true
     };
 
     var neonLightsMat;
 
     var meshes = {};
+
+    var puertas = [];
 
     var puntos = {};
 
@@ -188,7 +191,6 @@ var TEGame = function () {
                                 var sound = new THREE.Audio(listener);
                                 sound.autoplay = true;
                                 sound.setBuffer(buffer);
-                                sound.setVolume(0.8);
 
                                 assets[key].aud = sound;
 
@@ -355,10 +357,16 @@ var TEGame = function () {
             meshes["puertaIzq"+i].material.materials[1] = neonLightsMat;
             meshes["puertaIzq"+i].material.materials[0] = materialPuertas;
             meshes["puertaIzq"+i].tl = new TimelineMax({repeat: -1});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 0});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 6.6});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (10 - 0.1) + 0.1  , {x: 0});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (10 - 0.1) + 0.1  , {x: 6.6});
+            meshes["puertaIzq"+i].bbox = new THREE.BoundingBoxHelper(meshes["puertaIzq"+i],0x0000ff);
+            meshes["puertaIzq"+i].bbox.update();
 
             movingGroup.add(meshes["puertaIzq"+i]);
+
+            puertas.push(meshes["puertaIzq"+i]);
+
+            mainComp.scene.add(meshes["puertaIzq"+i].bbox);
         }
 
         for (var i = 0; i < 15; i++){
@@ -370,10 +378,14 @@ var TEGame = function () {
             meshes["puertaDer"+i].material.materials[1] = neonLightsMat;
             meshes["puertaDer"+i].material.materials[0] = materialPuertas;
             meshes["puertaDer"+i].tl = new TimelineMax({repeat: -1});
-            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: -6.6});
-            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 0});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (10 - 0.1) + 0.1  , {x: -6.6});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (10 - 0.1) + 0.1  , {x: 0});
+            meshes["puertaDer"+i].bbox = new THREE.BoundingBoxHelper(meshes["puertaDer"+i],0x0000ff);
+            meshes["puertaDer"+i].bbox.update();
 
             movingGroup.add(meshes["puertaDer"+i]);
+            puertas.push(meshes["puertaDer"+i]);
+            mainComp.scene.add(meshes["puertaDer"+i].bbox);
         }
 
         /*for(var i = 0; i < 15; i++) {
@@ -497,7 +509,10 @@ var TEGame = function () {
         //console.log(elapsed);
 
         if (assets['bgMusic'].aud.isPlaying){
-            control(delta);
+            if(player.canMove)
+            {
+                control(delta);
+            }
 
             if (elapsed >= "5" && elapsed <= "10") {
                 mainLight.intensity += 0.1 * delta;
@@ -508,12 +523,32 @@ var TEGame = function () {
 
             score += player.speed * delta;
 
+            if(score > 1000){
+                var score2 = score /1000;
+                $("#highscore").empty();
+                $("#highscore").append(score2.toFixed(2) +" KM");
+            }else{
+                $("#highscore").empty();
+                $("#highscore").append(score.toFixed(2)+" M");
+            }
+
             movingGroup.position.z -= player.speed * delta;
             //movingGroup2.position.z -= player.speed * delta;
 
             if (movingGroup.position.z <= -400){
                 movingGroup.position.z = 0;
                 //movingGroup2.position.z = 0;
+            }
+
+            for (var i = 0; i < puertas.length; i++){
+                puertas[i].bbox.update();
+                var colide = puertas[i].bbox.box.distanceToPoint(cam.position);
+                if(colide < 1){
+                    player.canMove = false;
+                    player.speed = -player.speed;
+                    player.slideSpeed = 0;
+                    //console.log("Hit !");
+                }
             }
 
             neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;

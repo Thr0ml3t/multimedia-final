@@ -69,6 +69,14 @@ body {
     position: relative;
 }
 
+#highscore {
+    position: fixed;
+    color: #ffffff;
+    font-size: 32px;
+    bottom: 5%;
+    left: 45%;
+}
+
 
 @-webkit-keyframes neon {
     from {
