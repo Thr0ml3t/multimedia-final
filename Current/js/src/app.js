@@ -154,6 +154,7 @@ $(document).ready(function () {
         $("#acerca").hide();
         $("#bg1").show();
         $("#bg2").show();
+        $("#bg3").show();
         $("#regresar").show();
 
     });
@@ -166,6 +167,7 @@ $(document).ready(function () {
         $("#acerca").show();
         $("#bg1").hide();
         $("#bg2").hide();
+        $("#bg3").hide();
         $("#regresar").hide();
         $("#info").hide();
     });
@@ -179,6 +181,7 @@ $(document).ready(function () {
         $("#acerca").show();
         $("#bg1").hide();
         $("#bg2").hide();
+        $("#bg3").hide();
         $("#regresar").hide();
     });
 
@@ -191,6 +194,20 @@ $(document).ready(function () {
         $("#acerca").show();
         $("#bg1").hide();
         $("#bg2").hide();
+        $("#bg3").hide();
+        $("#regresar").hide();
+    });
+
+    $("#bg3").click(function () {
+        confirmSound.play();
+        TEConfig.bgMusic = 3;
+
+        $("#startGame").show();
+        $("#opciones").show();
+        $("#acerca").show();
+        $("#bg1").hide();
+        $("#bg2").hide();
+        $("#bg3").hide();
         $("#regresar").hide();
     });
 

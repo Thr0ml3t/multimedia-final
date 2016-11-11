@@ -32,6 +32,7 @@ var TEMenu = function () {
 
         $("#bg1").hide();
         $("#bg2").hide();
+        $("#bg3").hide();
         $("#info").hide();
         $("#regresar").hide();
 

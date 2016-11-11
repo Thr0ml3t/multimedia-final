@@ -54,6 +54,11 @@ var TEGame = function () {
             file: "assets/sonidos/bg_game2.ogg",
             audio: null
         },
+        bgMusic3: {
+            type: 'sound',
+            file: "assets/sonidos/bg_game3.ogg",
+            audio: null
+        },
         neonMapE: {
             type: 'texture',
             file: "assets/pasillos/map_light.jpg",
@@ -473,11 +478,15 @@ var TEGame = function () {
                 assets["bgMusic2"].aud.play();
                 analyzer1 = new THREE.AudioAnalyser(assets["bgMusic2"].aud,32);
             }
+            if(TEConfig.bgMusic == 3){
+                assets["bgMusic3"].aud.play();
+                analyzer1 = new THREE.AudioAnalyser(assets["bgMusic3"].aud,32);
+            }
 
             TEConfig.mode = TEConfig.modes.game;
             $("#loading").hide();
             $("#loading").removeClass();
-        },3000);
+        },5000);
 
     }
 
@@ -581,6 +590,10 @@ var TEGame = function () {
                     if(TEConfig.bgMusic == 2){
                         assets['bgMusic2'].aud.stop();
                         assets['bgMusic2'].aud.play();
+                    }
+                    if(TEConfig.bgMusic == 3){
+                        assets['bgMusic3'].aud.stop();
+                        assets['bgMusic3'].aud.play();
                     }
                 },3000);
                 //console.log("Hit !");
