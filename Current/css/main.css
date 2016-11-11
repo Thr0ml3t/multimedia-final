@@ -102,6 +102,15 @@ body {
     transform: translate(500px, 0);
 }
 
+#info{
+    color: #ffffff;
+    font-size: 32px;
+}
+
+#info strong{
+    color: #0078FF;
+}
+
 
 @-webkit-keyframes neon {
     from {

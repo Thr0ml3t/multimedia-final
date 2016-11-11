@@ -3,7 +3,7 @@
  */
 var TEConfig = {
     fxSound: false, // Sin Implementar
-    bgMusic: true, // Sin Implementar
+    bgMusic: 1, // Seleccion de Cancion
     modes: {
         menu: 1,
         loading: 2,
@@ -145,6 +145,57 @@ $(document).ready(function () {
 
     $("#menu a").mouseenter(function () {
         menuSound.play();
+    });
+
+    $("#opciones").click(function () {
+        $("#startGame").hide();
+        $("#opciones").hide();
+        $("#acerca").hide();
+        $("#bg1").show();
+        $("#bg2").show();
+        $("#regresar").show();
+
+    });
+
+
+    $("#regresar").click(function () {
+        $("#startGame").show();
+        $("#opciones").show();
+        $("#acerca").show();
+        $("#bg1").hide();
+        $("#bg2").hide();
+        $("#regresar").hide();
+        $("#info").hide();
+    });
+
+    $("#bg1").click(function () {
+        TEConfig.bgMusic = 1;
+
+        $("#startGame").show();
+        $("#opciones").show();
+        $("#acerca").show();
+        $("#bg1").hide();
+        $("#bg2").hide();
+        $("#regresar").hide();
+    });
+
+    $("#bg2").click(function () {
+        TEConfig.bgMusic = 2;
+
+        $("#startGame").show();
+        $("#opciones").show();
+        $("#acerca").show();
+        $("#bg1").hide();
+        $("#bg2").hide();
+        $("#regresar").hide();
+    });
+
+    $("#acerca").click(function () {
+        $("#startGame").hide();
+        $("#opciones").hide();
+        $("#acerca").hide();
+        $("#info").show();
+        $("#regresar").show();
     });
 
     $(window).resize(function() {

@@ -49,6 +49,11 @@ var TEGame = function () {
             file: "assets/sonidos/bg_game.ogg",
             audio: null
         },
+        bgMusic2: {
+            type: 'sound',
+            file: "assets/sonidos/bg_game2.ogg",
+            audio: null
+        },
         neonMapE: {
             type: 'texture',
             file: "assets/pasillos/map_light.jpg",
@@ -189,13 +194,13 @@ var TEGame = function () {
                             assets[key].file,
                             function (buffer) {
                                 var sound = new THREE.Audio(listener);
-                                sound.autoplay = true;
+                                sound.autoplay = false;
                                 sound.setBuffer(buffer);
 
                                 assets[key].aud = sound;
 
                                 // 32 Fast Fourier Transform -> frequency domain
-                                analyzer1 = new THREE.AudioAnalyser(assets[key].aud,32);
+                                //analyzer1 = new THREE.AudioAnalyser(assets[key].aud,32);
                             }
                         );
                         break;
@@ -459,9 +464,21 @@ var TEGame = function () {
 
         timerM.start();
 
-        TEConfig.mode = TEConfig.modes.game;
-        $("#loading").hide();
-        $("#loading").removeClass();
+        setTimeout(function () {
+            if(TEConfig.bgMusic == 1){
+                assets["bgMusic"].aud.play();
+                analyzer1 = new THREE.AudioAnalyser(assets["bgMusic"].aud,32);
+            }
+            if(TEConfig.bgMusic == 2){
+                assets["bgMusic2"].aud.play();
+                analyzer1 = new THREE.AudioAnalyser(assets["bgMusic2"].aud,32);
+            }
+
+            TEConfig.mode = TEConfig.modes.game;
+            $("#loading").hide();
+            $("#loading").removeClass();
+        },3000);
+
     }
 
     function control(delta) {

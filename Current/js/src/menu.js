@@ -30,6 +30,11 @@ var TEMenu = function () {
         $("#menu").show();
         TEConfig.mode = TEConfig.modes.menu;
 
+        $("#bg1").hide();
+        $("#bg2").hide();
+        $("#info").hide();
+        $("#regresar").hide();
+
 
         // Nueva Time Line :D!!!
         timeLine = new TimelineMax({delay: 0.5});
