@@ -366,7 +366,7 @@ var TEGame = function () {
 
             puertas.push(meshes["puertaIzq"+i]);
 
-            mainComp.scene.add(meshes["puertaIzq"+i].bbox);
+            //mainComp.scene.add(meshes["puertaIzq"+i].bbox);
         }
 
         for (var i = 0; i < 15; i++){
@@ -385,7 +385,7 @@ var TEGame = function () {
 
             movingGroup.add(meshes["puertaDer"+i]);
             puertas.push(meshes["puertaDer"+i]);
-            mainComp.scene.add(meshes["puertaDer"+i].bbox);
+            //mainComp.scene.add(meshes["puertaDer"+i].bbox);
         }
 
         /*for(var i = 0; i < 15; i++) {
@@ -545,7 +545,7 @@ var TEGame = function () {
                 var colide = puertas[i].bbox.box.distanceToPoint(cam.position);
                 if(colide < 1){
                     player.canMove = false;
-                    player.speed = -player.speed;
+                    player.speed = 0;
                     player.slideSpeed = 0;
                     //console.log("Hit !");
                 }
