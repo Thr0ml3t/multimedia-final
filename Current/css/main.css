@@ -77,6 +77,31 @@ body {
     left: 45%;
 }
 
+#gameName{
+    color: #fff;
+    font-size: 72px
+}
+
+#gameName1{
+    opacity: 0;
+    display: inline-block;
+    -webkit-transform: translate(-500px, 0);
+    -moz-transform: translate(-500px, 0);
+    -ms-transform: translate(-500px, 0);
+    -o-transform: translate(-500px, 0);
+    transform: translate(-500px, 0);
+}
+
+#gameName2{
+    opacity: 0;
+    display: inline-block;
+    -webkit-transform: translate(500px, 0);
+    -moz-transform: translate(500px, 0);
+    -ms-transform: translate(500px, 0);
+    -o-transform: translate(500px, 0);
+    transform: translate(500px, 0);
+}
+
 
 @-webkit-keyframes neon {
     from {

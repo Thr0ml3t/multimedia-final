@@ -543,10 +543,16 @@ var TEGame = function () {
             for (var i = 0; i < puertas.length; i++){
                 puertas[i].bbox.update();
                 var colide = puertas[i].bbox.box.distanceToPoint(cam.position);
-                if(colide < 1){
+                if(colide < 1 && player.canMove){
                     player.canMove = false;
                     player.speed = 0;
                     player.slideSpeed = 0;
+                    setTimeout(function () {
+                        player.canMove = true;
+                        score = 0;
+                        cam.position.x = 0;
+                        movingGroup.position.z = 0;
+                    },3000);
                     //console.log("Hit !");
                 }
             }

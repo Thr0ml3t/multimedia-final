@@ -20,6 +20,8 @@ var TEMenu = function () {
     var movingGroup = [];
     var movingGroup2 = [];
 
+    var timeLine;
+
     function openMenu() {
         $("#menu").addClass("animated zoomInDown");
         $("#menu").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
@@ -27,6 +29,20 @@ var TEMenu = function () {
         });
         $("#menu").show();
         TEConfig.mode = TEConfig.modes.menu;
+
+
+        // Nueva Time Line :D!!!
+        timeLine = new TimelineMax({delay: 1});
+
+        timeLine.to($("#gameName1"),2,{transform: "translate(0,0)", ease: Bounce.easeOut});
+        timeLine.to($("#gameName1"),2,{opacity: 1, ease: Power2.easeInOut},"-=2");
+        //timeLine.to($("#gameName1"),2,{transform: "translate(-500px,0)", ease: Power2.easeInOut});
+        //timeLine.to($("#gameName1"),2,{opacity: 0, ease: Power2.easeInOut},"-=2");
+        timeLine.to($("#gameName2"),2,{transform: "translate(0,0)", ease: Bounce.easeOut},"-=2");
+        timeLine.to($("#gameName2"),2,{opacity: 1, ease: Power2.easeInOut}, "-=2");
+        //timeLine.to($("#gameName2"),2,{transform: "translate(500px,0)", ease: Power2.easeInOut});
+
+
         /*TEConfig.isMenu = true;*/
         //$("#myNav").fadeIn();
         /*$("#myNav").css("opacity","1.0");
@@ -52,6 +68,8 @@ var TEMenu = function () {
 
         dispose3(menuBlur.scene);
         dispose3(finalScene.scene);
+
+        timeLine.stop();
 
         timer.stop();
 
