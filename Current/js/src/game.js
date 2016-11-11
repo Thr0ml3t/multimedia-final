@@ -287,6 +287,9 @@ var TEGame = function () {
     // No muestra la Escena principal hasta terminar de construir todo el nivel
     function loadComplete() {
 
+        $("#loading").empty();
+        $("#loading").append('Generando mapa espera un momento.' );
+
         timerL.stop();
 
         neonLightsMat.emissiveMap = assets.neonMapE.texture;
