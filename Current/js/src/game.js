@@ -573,9 +573,15 @@ var TEGame = function () {
                     score = 0;
                     cam.position.x = 0;
                     movingGroup.position.z = 0;
-                    assets['bgMusic'].aud.stop();
-                    //assets['bgMusic'].aud.setPlaybackRate(1.0);
-                    assets['bgMusic'].aud.play();
+
+                    if(TEConfig.bgMusic == 1){
+                        assets['bgMusic'].aud.stop();
+                        assets['bgMusic'].aud.play();
+                    }
+                    if(TEConfig.bgMusic == 2){
+                        assets['bgMusic2'].aud.stop();
+                        assets['bgMusic2'].aud.play();
+                    }
                 },3000);
                 //console.log("Hit !");
             }
