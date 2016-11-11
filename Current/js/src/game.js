@@ -90,6 +90,10 @@ var TEGame = function () {
 
     var meshes = {};
 
+    var puntos = {};
+
+    var score = 0;
+
     function init() {
         loadingMap.scene = new THREE.Scene();
         neonComp.scene = new THREE.Scene();
@@ -184,10 +188,11 @@ var TEGame = function () {
                                 var sound = new THREE.Audio(listener);
                                 sound.autoplay = true;
                                 sound.setBuffer(buffer);
-                                sound.setVolume(0.5);
+                                sound.setVolume(0.8);
 
                                 assets[key].aud = sound;
 
+                                // 32 Fast Fourier Transform -> frequency domain
                                 analyzer1 = new THREE.AudioAnalyser(assets[key].aud,32);
                             }
                         );
@@ -345,12 +350,13 @@ var TEGame = function () {
             meshes["puertaIzq"+i].name = "PuertaIzq-"+i;
             meshes["puertaIzq"+i].scale.set(5,5,5);
             meshes["puertaIzq"+i].rotation.set(0,Math.PI/2,0);
-            meshes["puertaIzq"+i].position.z = 80*i + 9.7;
+            meshes["puertaIzq"+i].position.x = 6.6;
+            meshes["puertaIzq"+i].position.z = 40*i + 9.7;
             meshes["puertaIzq"+i].material.materials[1] = neonLightsMat;
             meshes["puertaIzq"+i].material.materials[0] = materialPuertas;
             meshes["puertaIzq"+i].tl = new TimelineMax({repeat: -1});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 6) + 3  , {x: 10});
-            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.floor(Math.random() * 6) + 3  , {x: 0});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 0});
+            meshes["puertaIzq"+i].tl.to(meshes["puertaIzq"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 6.6});
 
             movingGroup.add(meshes["puertaIzq"+i]);
         }
@@ -360,12 +366,12 @@ var TEGame = function () {
             meshes["puertaDer"+i].name = "PuertaDer-"+i;
             meshes["puertaDer"+i].scale.set(5,5,5);
             meshes["puertaDer"+i].rotation.set(0,Math.PI/2,0);
-            meshes["puertaDer"+i].position.z = 80*i + 9.7;
+            meshes["puertaDer"+i].position.z = 40*i + 9.7;
             meshes["puertaDer"+i].material.materials[1] = neonLightsMat;
             meshes["puertaDer"+i].material.materials[0] = materialPuertas;
             meshes["puertaDer"+i].tl = new TimelineMax({repeat: -1});
-            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.floor(Math.random() * 6) + 2  , {x: -10});
-            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.floor(Math.random() * 6) + 2  , {x: 0});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: -6.6});
+            meshes["puertaDer"+i].tl.to(meshes["puertaDer"+i].position, Math.random() * (1 - 0.5) + 0.5  , {x: 0});
 
             movingGroup.add(meshes["puertaDer"+i]);
         }
@@ -446,6 +452,44 @@ var TEGame = function () {
         $("#loading").removeClass();
     }
 
+    function control(delta) {
+        var input = TEMain.getInputState();
+
+        if (input[87]){
+            if(player.speed < player.maxSpeed){
+                player.speed += player.acceleration;
+            }
+        }else{
+            if(player.speed > 0){
+                player.speed -= player.acceleration;
+            }
+        }
+
+        if(input[83]){
+            if(player.speed > 0){
+                player.speed -= player.acceleration * 10.0;
+            }
+        }
+
+        if(input[65]) { // Tecla A
+            player.slideSpeed += player.slideAcceleration;
+            player.slideSpeed = Math.min(player.slideSpeed,player.maxSideSpeed);
+        }else if(input[68]) { // Tecla D
+            player.slideSpeed -= player.slideAcceleration;
+            player.slideSpeed = Math.max(player.slideSpeed,-player.maxSideSpeed);
+        }else{
+            player.slideSpeed *= 0.8;
+        }
+
+        var next = cam.position.x + player.slideSpeed * delta;
+
+        if(next > 7 || next < -7){
+            player.slideSpeed = -player.slideSpeed * 1.0;
+        }
+
+
+    }
+
     function mainAnimate() {
 
         var delta = timerM.getDelta();
@@ -453,24 +497,23 @@ var TEGame = function () {
         //console.log(elapsed);
 
         if (assets['bgMusic'].aud.isPlaying){
+            control(delta);
 
             if (elapsed >= "5" && elapsed <= "10") {
                 mainLight.intensity += 0.1 * delta;
                 dirLight.intensity += 0.01 * delta;
             }
-            if(elapsed >= "10"){
-                player.speed = analyzer1.getAverageFrequency() / 4;
-            }
 
             mainLight.distance = analyzer1.getAverageFrequency();
 
+            score += player.speed * delta;
 
             movingGroup.position.z -= player.speed * delta;
-            movingGroup2.position.z -= player.speed * delta;
+            //movingGroup2.position.z -= player.speed * delta;
 
             if (movingGroup.position.z <= -400){
                 movingGroup.position.z = 0;
-                movingGroup2.position.z = 0;
+                //movingGroup2.position.z = 0;
             }
 
             neonLightsMat.emissive.r = (Math.sin(0.00353 * colorCount) * 127 + 128) / 255;
@@ -480,6 +523,12 @@ var TEGame = function () {
             colorCount++;
 
             neonLightsMat.emissiveIntensity = analyzer1.getAverageFrequency() / 100;
+
+            cam.position.x += player.slideSpeed * delta;
+            mainLight.position.x = cam.position.x;
+            movingGroup.rotation.z = THREE.Math.degToRad(player.slideSpeed * delta * 2);
+
+
         }else {
 
             mainLight.distance = 1;

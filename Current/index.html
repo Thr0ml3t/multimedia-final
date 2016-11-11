@@ -13,6 +13,14 @@
 </head>
 
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.8&appId=1853777241510093";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <div class="game" id="game"></div>
 
@@ -21,15 +29,18 @@
     <div class="overlay-content">
         <div id="menu">
             <ul>
+                <li style="color: #fff; font-size: 42px">No se me ocurre un nombre -.-</li>
                 <li><a id="startGame" href="#">Jugar</a></li>
                 <li><a href="#">Puntajes</a></li>
                 <li><a href="#">Acerca</a></li>
+                <li><div class="fb-share-button" data-href="https://thr0ml3t.github.io/multimedia-final/Current/" data-layout="button_count" data-size="large" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fthr0ml3t.github.io%2Fmultimedia-final%2FCurrent%2F&amp;src=sdkpreparse">Compartir</a></div></li>
             </ul>
         </div>
         <div id="loading" class="animated flash">
         </div>
         <div id="highscore" class="animated fadeOut">
         </div>
+
     </div>
 </div>
 

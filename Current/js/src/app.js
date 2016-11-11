@@ -2,27 +2,22 @@
  * Created by thr0m on 05/10/2016.
  */
 var TEConfig = {
-    fxSound: false,
-    bgMusic: true,
-    isMenu: true,
-    isLoading: true,
-    isPlaying: false,
+    fxSound: false, // Sin Implementar
+    bgMusic: true, // Sin Implementar
     modes: {
         menu: 1,
         loading: 2,
         game: 3
     },
-    mode: 1,
-
-    level_W: 560,
-    level_D: 20,
-    step: 480
+    mode: 1
 };
 
 var TEMain = function () {
     var camera,renderer,audioListener;
 
     var stats;
+
+    var input = {};
 
     function init() {
 
@@ -54,9 +49,13 @@ var TEMain = function () {
         render();
     };
 
-    $(window).resize(function() {
-        resize();
-    });
+    function inputDown(k){
+        input[k] = true;
+    }
+
+    function inputUp(k){
+        input[k] = false;
+    }
 
 
     function resize() {
@@ -106,6 +105,12 @@ var TEMain = function () {
         },
         getRenderer: function () {
             return renderer;
+        },
+        resize: resize,
+        inputUp: inputUp,
+        inputDown: inputDown,
+        getInputState: function () {
+            return input;
         }
     }
 
@@ -136,5 +141,17 @@ $(document).ready(function () {
 
     $("#menu a").mouseenter(function () {
         menuSound.play();
+    });
+
+    $(window).resize(function() {
+        TEMain.resize();
+    });
+
+    $(window).on("keydown", function (e) {
+        TEMain.inputDown(e.keyCode)
+    });
+
+    $(window).on("keyup", function (e) {
+        TEMain.inputUp(e.keyCode);
     });
 });
