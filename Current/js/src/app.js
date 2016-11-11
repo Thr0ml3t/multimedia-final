@@ -148,6 +148,7 @@ $(document).ready(function () {
     });
 
     $("#opciones").click(function () {
+        confirmSound.play();
         $("#startGame").hide();
         $("#opciones").hide();
         $("#acerca").hide();
@@ -159,6 +160,7 @@ $(document).ready(function () {
 
 
     $("#regresar").click(function () {
+        confirmSound.play();
         $("#startGame").show();
         $("#opciones").show();
         $("#acerca").show();
@@ -169,6 +171,7 @@ $(document).ready(function () {
     });
 
     $("#bg1").click(function () {
+        confirmSound.play();
         TEConfig.bgMusic = 1;
 
         $("#startGame").show();
@@ -180,6 +183,7 @@ $(document).ready(function () {
     });
 
     $("#bg2").click(function () {
+        confirmSound.play();
         TEConfig.bgMusic = 2;
 
         $("#startGame").show();
@@ -191,6 +195,7 @@ $(document).ready(function () {
     });
 
     $("#acerca").click(function () {
+        confirmSound.play();
         $("#startGame").hide();
         $("#opciones").hide();
         $("#acerca").hide();
